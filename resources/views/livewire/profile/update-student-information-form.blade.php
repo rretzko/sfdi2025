@@ -122,7 +122,7 @@ new class extends Component
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __("Update your account's student information.") }}
+            {{ __("Update your student information.") }}
         </p>
     </header>
 
