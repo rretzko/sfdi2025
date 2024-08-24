@@ -8,8 +8,8 @@ use Livewire\Volt\Component;
 
 new class extends Component
 {
-    public string $name = '';
-    public string $email = '';
+    public string $phoneHome = '';
+    public string $phoneMobile = '';
 
     /**
      * Mount the component.
@@ -30,7 +30,7 @@ new class extends Component
     /**
      * Update the profile information for the currently authenticated user.
      */
-    public function updatePhoneNumber(): void
+    public function updatePhoneNumbers(): void
     {
         $user = Auth::user();
 
@@ -39,15 +39,43 @@ new class extends Component
             'phoneMobile' => ['nullable', 'string', 'max:24'],
         ]);
 
-        $user->fill($validated);
+        $service = new \App\Services\FormatPhoneService();
+        $updatedHome = $this->updatePhone($service->getPhoneNumber($this->phoneHome), 'home');
+        $updatedMobile = $this->updatePhone($service->getPhoneNumber($this->phoneMobile), 'mobile');
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+        if($updatedHome || $updatedMobile){
+            $this->resetPhones();
+            $this->dispatch('phone-number-updated', name: $user->name);
         }
 
-        $user->save();
+    }
 
-        $this->dispatch('phone-number-updated', name: $user->name);
+    public function updatePhone(string $phoneNumber, string $phoneType): bool
+    {
+        return (bool)\App\Models\PhoneNumber::updateOrCreate(
+                [
+                    'user_id' => auth()->id(),
+                    'phone_type' => $phoneType
+                ],
+                [
+                    'phone_number' => $phoneNumber,
+                ]
+            );
+    }
+
+    private function resetPhones()
+    {
+        $this->phoneHome = \App\Models\PhoneNumber::query()
+            ->where('user_id', auth()->id())
+            ->where('phone_type', 'home')
+            ->first()
+            ->phone_number;
+
+        $this->phoneMobile = \App\Models\PhoneNumber::query()
+            ->where('user_id', auth()->id())
+            ->where('phone_type', 'mobile')
+            ->first()
+            ->phone_number;
     }
 
 }; ?>
