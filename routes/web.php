@@ -16,4 +16,8 @@ Route::view('school', 'school')
     ->middleware(['auth'])
     ->name('school');
 
+Route::view('emergencyContacts', 'emergencyContacts')
+    ->middleware(['auth'])
+    ->name('emergencyContacts');
+
 require __DIR__.'/auth.php';

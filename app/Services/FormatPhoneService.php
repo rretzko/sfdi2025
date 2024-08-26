@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
-class FormatPhoneService
+use Illuminate\Database\Eloquent\Model;
+
+class FormatPhoneService extends Model
 {
+
     public function getPhoneNumber(string $raw): string
     {
         return $this->formatPhoneNumber($raw);

@@ -35,7 +35,7 @@ new class extends Component
     }
 
     /**
-     * Update the profile information for the currently authenticated user.
+     * Update the school information for the currently authenticated user.
      */
     public function updateSchoolInformation(): void
     {
