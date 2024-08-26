@@ -20,4 +20,8 @@ Route::view('emergencyContacts', 'emergencyContacts')
     ->middleware(['auth'])
     ->name('emergencyContacts');
 
+Route::view('events', 'events')
+    ->middleware(['auth'])
+    ->name('events');
+
 require __DIR__.'/auth.php';

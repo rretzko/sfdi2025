@@ -3,11 +3,10 @@
 namespace App\Models;
 
 use App\Models\Schools\GradesITeach;
-use App\Models\Schools\School;
-use App\Models\Schools\SchoolTeacher;
-use App\Models\Students\Student;
+use App\Models\School;
+use App\Models\SchoolTeacher;
+use App\Models\Student;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -17,8 +16,6 @@ use Illuminate\Support\Facades\Log;
 
 class Teacher extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'id',
         'user_id',

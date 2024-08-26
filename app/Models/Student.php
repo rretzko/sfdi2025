@@ -4,9 +4,8 @@ namespace App\Models;
 
 use App\Models\School;
 use App\Models\Teacher;
-use App\Models\Students\VoicePart;
+use App\Models\VoicePart;
 use App\Services\CalcGradeFromClassOfService;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -15,8 +14,6 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Student extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'id',
         'user_id',
@@ -27,6 +24,15 @@ class Student extends Model
         'shirt_size'
     ];
 
+    public function activeSchool(): School
+    {
+        return School::query()
+            ->join('school_student', 'school_student.school_id', '=', 'schools.id')
+            ->where('school_student.student_id', $this->id)
+            ->where('school_student.active', 1)
+            ->select('schools.*')
+            ->first();
+    }
     public function address(): HasOne
     {
         return $this->hasOne(Address::class, 'user_id', 'user_id');
@@ -35,6 +41,11 @@ class Student extends Model
     public function emergencyContacts(): HasMany
     {
         return $this->hasMany(EmergencyContact::class);
+    }
+
+    public function getEligibleVersions(): array
+    {
+        return [];
     }
 
     public function getGradeAttribute(): int

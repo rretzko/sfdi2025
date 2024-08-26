@@ -79,6 +79,11 @@ class School extends Model
         return $this->belongsToMany(Student::class);
     }
 
+    public function teachers(): BelongsToMany
+    {
+        return $this->belongsToMany(Teacher::class);
+    }
+
     public function updateGrades(array $grades): void
     {
         //clear the table of $this grades
