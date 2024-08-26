@@ -18,3 +18,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+.env.sfdi2025
+.vapor/
+.env.production
+.env.staging

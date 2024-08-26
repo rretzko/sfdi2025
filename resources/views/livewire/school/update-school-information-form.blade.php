@@ -12,6 +12,7 @@ new class extends Component
     public string $schoolId = '';
     public array $schools = [];
     public Student $student;
+    public int $studentId = 0;
     public int $teacherId = 0;
     public array $teachers = [];
 
@@ -21,9 +22,16 @@ new class extends Component
     public function mount(): void
     {
         $this->student = Student::where('user_id', auth()->id())->first();
+        $this->studentId = $this->student->id;
         $this->schoolId = $this->student->schools()->wherePivot('active', 1)->first()->id;
+        $this->teacherId = $this->getTeacherId();
         $this->teachers = $this->buildTeachers();
         $this->schools = $this->buildSchools();
+    }
+
+    public function updatedSchoolId(): void
+    {
+        $this->teachers = $this->buildTeachers();
     }
 
     /**
@@ -33,10 +41,17 @@ new class extends Component
     {
         $validated = $this->validate([
             'schoolId' => ['required', 'int', 'exists:schools,id'],
+            'teacherId' => ['required','int', 'exists:teachers,id'],
         ]);
 
         //set all schools to not-active
+        $this->setSchoolsToInActive();
+
         //update/create $this->schoolId as active
+        $this->setSelectedSchoolToActive();
+
+        //update/create student-teacher relationship
+        $this->setStudentTeacher();
 
         $this->dispatch('school-information-updated', name: $this->student->user->name);
     }
@@ -50,7 +65,7 @@ new class extends Component
             ->toArray();
     }
 
-    private function buildTeachers()
+    private function buildTeachers(): array
     {
         //early exit
         if(! $this->schoolId){
@@ -73,6 +88,54 @@ new class extends Component
             ->pluck('users.name','teachers.id')
             ->toArray();
     }
+
+    private function getTeacherId(): int
+    {
+        return \Illuminate\Support\Facades\DB::table('student_teacher')
+            ->where('student_id', $this->studentId)
+            ->first()
+            ->teacher_id;
+    }
+
+    private function setSchoolsToInactive(): void
+    {
+        \Illuminate\Support\Facades\DB::table('school_student')
+            ->where('student_id', $this->studentId)
+            ->update(['active' => 0]);
+    }
+
+    private function setSelectedSchoolToActive():void
+    {
+        \Illuminate\Support\Facades\DB::table('school_student')
+            ->where('student_id', $this->studentId)
+            ->where('school_id', $this->schoolId)
+            ->exists()
+            ? \Illuminate\Support\Facades\DB::table('school_student')
+            ->where('student_id', $this->studentId)
+            ->where('school_id', $this->schoolId)
+            ->update(['active' => 1])
+            : \Illuminate\Support\Facades\DB::table('school_student')
+            ->insert([
+                'student_id' => $this->studentId,
+                'school_id' => $this->schoolId,
+                'active' => 1,
+            ]);
+    }
+
+    private function setStudentTeacher(): void
+    {
+        if(! \Illuminate\Support\Facades\DB::table('student_teacher')
+        ->where('student_id', $this->studentId)
+        ->where('teacher_id', $this->teacherId)
+        ->exists()){
+
+            \Illuminate\Support\Facades\DB::table('student_teacher')
+                ->insert([
+                    'student_id' => $this->studentId,
+                    'teacher_id' => $this->teacherId,
+                        ]);
+            }
+    }
 }; ?>
 
 <section>
@@ -91,7 +154,7 @@ new class extends Component
         <div>
             {{-- SCHOOL --}}
             <x-input-label for="schoolId" :value="__('School')" />
-            <select wire:model="schoolId" required >
+            <select wire:model.live="schoolId" required >
                 @foreach($schools AS $id => $schoolName)
                     <option value="{{ $id }}">
                         {{ $schoolName }}
@@ -116,7 +179,7 @@ new class extends Component
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
-            <x-action-message class="me-3" on="profile-updated">
+            <x-action-message class="me-3" on="school-information-updated">
                 {{ __('Saved.') }}
             </x-action-message>
         </div>
