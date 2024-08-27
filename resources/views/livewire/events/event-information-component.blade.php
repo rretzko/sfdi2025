@@ -10,6 +10,7 @@
         </p>
     </header>
 
+    {{-- QUALIFICATIONS --}}
     <div class="mt-4">
         <h3 class="font-semibold underline">Qualifications</h3>
 
@@ -36,6 +37,23 @@
             <label class="w-1/4 sm:w-1/6 lg:w-1/12">Voice Part:</label>
             <div class="font-semibold">{{ $defaultVoicePartDescr }}</div>
         </div>
+
+        {{-- EVENTS --}}
+        <div class="flex flex-row">
+            <label class="w-1/4 sm:w-1/6 lg:w-1/12">Events:</label>
+            <div class="font-semibold">{{ $eventsCsv }}</div>
+        </div>
+    </div>
+
+    {{-- REGISTRATION CARDS --}}
+    <div class="mt-4 flex flex-row flex-wrap gap-2">
+        @forelse($events AS $event)
+            <div class="bg-gray-100 border border-gray-800 rounded-lg px-2">
+                {{ $event->name }} Registration
+            </div>
+        @empty
+            {{-- do nothing --}}
+        @endforelse
     </div>
 
     <div class="mt-8">
@@ -45,9 +63,9 @@
             <li class="line-through">Find Teachers</li>
             <li class="line-through">Find Student Grade</li>
             <li class="line-through">Find Student Default voice part</li>
-            <li>Find Open events with these teachers as obligated or better</li>
-            <li>Validate User properties against event requirements.</li>
-            <li>Provide actionable information for user to rectify or return to teacher, and/or</li>
+            <li class="line-through">Find Open events with these teachers as obligated or better</li>
+            <li class="line-through">Validate User properties against event requirements.</li>
+            <li class="line-through">Provide actionable information for user to rectify or return to teacher, and/or</li>
             <li>Ensure that candidate row exists</li>
             <li>Open populated event registration form.</li>
         </ul>
