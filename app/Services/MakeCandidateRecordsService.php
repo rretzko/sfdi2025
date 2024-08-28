@@ -39,7 +39,7 @@ class MakeCandidateRecordsService
 
                 $id = $this->makeUniqueCandidateId();
 
-                Candidate::create(
+                $candidate = Candidate::create(
                     [
                         'id' => $id,
                         'ref' => substr($id, 0, $versionIdLength).'-'.substr($id, $versionIdLength),

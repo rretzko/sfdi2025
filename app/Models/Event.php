@@ -3,9 +3,10 @@
 namespace App\Models;
 
 use App\Models\Ensembles\Ensemble;
-use App\Models\Events\EventEnsemble;
-use App\Models\Events\Versions\Version;
+use App\Models\EventEnsemble;
+use App\Models\Version;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -60,6 +61,18 @@ class Event extends Model
     public function versions(): HasMany
     {
         return $this->hasMany(Version::class)->orderByDesc('senior_class_of');
+    }
+
+    public function voiceParts(): Collection
+    {
+        $voiceParts = collect();
+
+        foreach($this->eventEnsembles AS $ensemble){
+
+            $voiceParts = $voiceParts->merge($ensemble->voiceParts());
+        }
+
+        dd($voiceParts);
     }
 
 }
