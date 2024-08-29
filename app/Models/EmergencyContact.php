@@ -20,9 +20,9 @@ class EmergencyContact extends Model
         'best_phone',
     ];
 
-    public function student(): BelongsTo
+    public function bestPhone(): BelongsTo
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(\string::class, 'bestPhone');
     }
 
     public function emergencyContactType(): BelongsTo
@@ -30,8 +30,17 @@ class EmergencyContact extends Model
         return $this->belongsTo(EmergencyContactType::class);
     }
 
-    public function bestPhone(): BelongsTo
+    public function hasBestPhone(): bool
     {
-        return $this->belongsTo(\string::class, 'bestPhone');
+        $bestPhone = $this->best_phone;
+        $property = 'phone_' . $bestPhone;
+
+        return (bool)strlen($this->$property);
     }
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class);
+    }
+
 }

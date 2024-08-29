@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-use App\Models\Ensembles\Ensemble;
+use App\Models\Ensemble;
 use App\Models\EventEnsemble;
 use App\Models\Version;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -69,10 +69,12 @@ class Event extends Model
 
         foreach($this->eventEnsembles AS $ensemble){
 
-            $voiceParts = $voiceParts->merge($ensemble->voiceParts());
+            $voiceParts = $voiceParts->merge($ensemble->voiceParts())
+                ->unique('id')
+                ->sortBy('order_by');
         }
 
-        dd($voiceParts);
+        return $voiceParts;
     }
 
 }

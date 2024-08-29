@@ -4,16 +4,19 @@ namespace App\Livewire\Events;
 
 use App\Livewire\Forms\VersionRegistrationForm;
 use App\Models\Candidate;
+use App\Models\Geostate;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\StudentTeacher;
 use App\Models\Teacher;
 use App\Models\Version;
+use App\Models\VersionConfigRegistrant;
 use App\Models\VoicePart;
 use App\Services\CalcGradeFromClassOfService;
 use App\Services\CoTeachersService;
 use App\Services\FindTeacherOpenEventsService;
 use App\Services\MakeCandidateRecordsService;
+use Illuminate\Support\Str;
 use Livewire\Component;
 
 class EventInformationComponent extends Component
@@ -22,10 +25,14 @@ class EventInformationComponent extends Component
     public array $coTeacherIds = [];
     public string $defaultVoicePartDescr = '';
     public array $eligibleVersions = [];
+    public array $emergencyContacts = [];
     public array $events = []; //synonym for versions
     public string $eventsCsv = 'No events found.';
-    public int $grade=4;
+    public array $geostates = [];
+    public int $grade = 4;
     public array $programNames = [];
+    public bool $requiresHomeAddress = false;
+
     public School $school;
     public string $schoolName = '';
     public array $showForms = [];
@@ -41,16 +48,26 @@ class EventInformationComponent extends Component
 
         $this->student = Student::where('user_id', auth()->id())->first();
         $this->studentId = $this->student->id;
+        $this->emergencyContacts = $this->getEmergencyContacts();
 
         $this->defaultVoicePartDescr = VoicePart::find($this->student->voice_part_id)->descr;
-        $this->eligibleVersions = $this->student->getEligibleVersions(); // <======   START HERE
+        //$this->eligibleVersions = $this->student->getEligibleVersions(); // <======   START HERE
         $this->grade = $gradeService->getGrade($this->student->class_of);
+
         $this->school = $this->student->activeSchool();
         $this->schoolName = $this->school->name;
         $this->teachersCsv = $this->getTeachersCsv();
         $this->teacherId = $this->getTeacherId();
-        $this->eventsCsv = $this->getEventsCsv();
+
+        /**
+         * @todo refactor $this->events to $this->versions
+         * @todo isolate the instantiation of $this->events
+         */
+        $this->eventsCsv = $this->getEventsCsv(); //also sets $this->events
         $this->voiceParts = $this->getVoiceParts(); //of event ensemble(s) voice parts
+        $this->requiresHomeAddress = $this->getRequiresHomeAddress();
+
+        $this->geostates = Geostate::orderBy('name')->pluck('name', 'id')->toArray();
 
         //ensure that a row exists for auth()->user() for open events
         $this->setCandidateRow();
@@ -61,9 +78,50 @@ class EventInformationComponent extends Component
         return view('livewire.events.event-information-component');
     }
 
+    public function downloadApp()
+    {
+        return $this->redirect('pdf/application/' . $this->form->candidate->id);
+    }
+
     public function setVersion(int $versionId): void
     {
         $this->form->setVersion($versionId);
+    }
+
+    public function updated($property)
+    {
+        if(substr($property, 0, 5) === 'form.'){
+
+            //remove 'form.' from $property
+            $formProperty = substr($property,5);
+
+            //prepend 'update' and capitalize $formProperty to create the method name
+            $method = 'update' . ucwords($formProperty);
+
+            //if successful update, dispatch notice for $user
+            if($this->form->$method()){
+                $target = Str::kebab($formProperty) . '-updated';
+                $this->dispatch($target, true);
+            }
+
+        }
+
+    }
+
+    private function getEmergencyContacts(): array
+    {
+        $a = [];
+
+        foreach($this->student->emergencyContacts AS $emergencyContact){
+
+            $a[] = [
+                'id' => $emergencyContact->id,
+                'name' => $emergencyContact->name,
+                'bestPhone' => $emergencyContact->hasBestPhone() ? $emergencyContact->best_phone : 'missing',
+            ];
+        }
+
+        return $a;
     }
 
     private function getEventsCsv(): string
@@ -86,6 +144,13 @@ class EventInformationComponent extends Component
         $names = array_column($this->events, 'name');
 
         return implode(' | ', $names);
+    }
+
+    private function getRequiresHomeAddress(): bool
+    {
+        $version = Version::find($this->form->versionId);
+
+        return (bool)!$version->student_home_address;
     }
 
     private function getTeachersCsv(): string
@@ -138,7 +203,9 @@ class EventInformationComponent extends Component
         $event = $version->event;
         $ensembles = $event->eventEnsembles;
 
-        dd($event->voiceParts());
+        return $event->voiceParts()
+            ->pluck('descr', 'id')
+            ->toArray();
     }
 
     private function setCandidateRow(): void

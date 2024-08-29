@@ -70,22 +70,126 @@
     <div class="flex flex-col">
 
         {{-- PROGRAM NAME --}}
-        <div class="flex flex-col">
+        <div class="flex flex-col mb-2">
             <label for="form.programName">Name as it should appear in the program</label>
-            <input type="text" wire:model="form.programName" class="max-w-md"/>
+            <div class="flex flex-row space-x-2">
+                <input type="text" wire:model.live.debounce.500ms="form.programName" class="max-w-md" required/>
+                {{-- SAVED MESSAGE --}}
+                <div class="mt-6 ml-4">
+                    <x-action-message class="me-3 text-green-600 self-center" on="program-name-updated">
+                        {{ __('Saved.') }}
+                    </x-action-message>
+                </div>
+            </div>
+            @error('programName')
+                <div class="text-red-600">{{ $message }}</div>
+            @enderror
         </div>
 
-        <div class="flex flex-col">
+        {{-- VOICE PART --}}
+        <div class="flex flex-col mb-2">
             <label for="form.voicePartId">Auditioning on Voice Part</label>
-            <select wire:model="form.voicePartId">
-                @foreach($voiceParts AS $voicePart)
-                    <option value="{{ $voicePart['id'] }}">
-                        {{ $voicePart['descr'] }}
-                    </option>
-                @endforeach
-            </select>
-            <input type="text" wire:model="form.programName" class="max-w-md"/>
+            <div class="flex flex-row space-x-2">
+                <select wire:model.live="form.voicePartId" class="w-fit">
+                    <option value="0">- select -</option>
+                    @foreach($form->voiceParts AS $id => $descr)
+                        <option value="{{ $id }}">
+                            {{ $descr }}
+                        </option>
+                    @endforeach
+                </select>
+                {{-- SAVED MESSAGE --}}
+                <div class="mt-6 ml-4">
+                    <x-action-message class="me-3 text-green-600 self-center" on="voice-part-id-updated">
+                        {{ __('Saved.') }}
+                    </x-action-message>
+                </div>
+            </div>
+            @error('form.voicePartId')
+            <div class="text-red-600">{{ $message }}</div>
+            @enderror
         </div>
+
+        {{-- HOME ADDRESS --}}
+        @if($requiresHomeAddress)
+            @include('components.partials.home-address')
+        @endif {{-- end of requiresHomeAddress --}}
+
+        {{-- EMERGENCY CONTACTS --}}
+        <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
+            <label for="" class="font-semibold">Emergency Contact(s)
+                <span class="text-xs italic"> (Select one)</span>
+            </label>
+
+            @forelse($emergencyContacts AS $key => $emergencyContact)
+
+                <div class="flex flex-row space-x-2" wire:key="ec-{{ $emergencyContact['id'] }}">
+                    <input type="radio"
+                           wire:model.live="form.emergencyContactId"
+                           value="{{ $emergencyContact['id'] }}"
+                           class="self-center"
+                           @disabled($emergencyContact['bestPhone'] === 'missing')
+                    >
+                    <label for="form.emergencyContactId"
+                        class="@if($emergencyContact['bestPhone'] === 'missing') text-red-600 @endif"
+                    >
+                        {{ $emergencyContact['name'] }} (Best Phone: {{ $emergencyContact['bestPhone'] }})
+                    </label>
+                </div>
+            @empty
+                <div class="text-red-600">
+                    No Emergency Contacts found.  Please add your emergency contact information using
+                    the "Emergency Contacts" link at the top of this page.
+                </div>
+            @endforelse
+            {{-- SAVED MESSAGE --}}
+            <div class="mt-6 ml-4">
+                <x-action-message class="me-3 text-green-600 self-center" on="emergency-contact-id-updated">
+                    {{ __('Saved.') }}
+                </x-action-message>
+            </div>
+        </fieldset>
+
+        {{-- APPLICATION --}}
+        <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
+            <label for="" class="font-semibold">Application</label>
+
+            {{-- PRE-CHECK ERRORS --}}
+            @include('components.partials.pre-check-errors')
+
+            @if($form->eapplication)
+                eApplication
+            @else
+                <div>
+                    <button
+                        wire:click="downloadApp()"
+                        type="button"
+                        class="bg-indigo-500 text-white text-xs px-2 rounded-lg shadow-lg"
+                    >
+                        Click to download your application
+                    </button>
+                </div>
+            @endif
+
+        </fieldset>
+
+        {{-- UPLOADS --}}
+        @if($form->uploadTypesCount)
+            @include('components.partials.audition-recordings')
+        @endif
+
+        {{-- PITCH FILES --}}
+        @if($form->pitchFiles)
+            @include('components.partials.pitch-files')
+        @endif
+
+        {{-- ePayment --}}
+        @if($form->ePay)
+            <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
+                <label for="" class="font-semibold">Payment</label>
+                {{ serialize($form->fileUploads) }}
+            </fieldset>
+        @endif
 
     </div>
 

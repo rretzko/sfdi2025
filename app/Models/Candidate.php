@@ -2,22 +2,21 @@
 
 namespace App\Models;
 
-use App\Models\Events\Versions\Participations\Application;
+use App\Models\Application;
 use App\Models\Version;
 use App\Models\Teacher;
 use App\Models\Student;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Candidate extends Model
 {
-    use HasFactory;
 
     protected $fillable = [
         'id',
+        'emergency_contact_id',
         'program_name',
         'ref',
         'school_id',

@@ -24,4 +24,8 @@ Route::view('events', 'events')
     ->middleware(['auth'])
     ->name('events');
 
+//PDFs
+Route::get('pdf/application/{candidate}', \App\Http\Controllers\Pdfs\ApplicationPdfController::class)
+    ->name('pdf.application');
+
 require __DIR__.'/auth.php';
