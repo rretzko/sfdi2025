@@ -82,6 +82,14 @@ class EventInformationComponent extends Component
     public function setVersion(int $versionId): void
     {
         $this->form->setVersion($versionId);
+
+        //set all values to false
+        $this->showForms = array_map(function(){
+            return false;
+        }, $this->showForms);
+
+        //set the selected $versionId key to true
+        $this->showForms[$versionId] = true;
     }
 
     public function updated($property)

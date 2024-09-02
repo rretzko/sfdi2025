@@ -164,7 +164,7 @@
             @include('components.partials.pre-check-errors')
 
             @if($form->eapplication)
-                eApplication
+                @include("components.partials.eapplications.versions.$form->versionId.eapplication")
             @else
                 <div>
                     <button
