@@ -75,6 +75,8 @@ class MakeCandidateRecordsService
             ->pluck('student_id')
             ->toArray();
 
+        //reduce the $studentIds to only those missing from $candidateStudentIds
+        //i.e. return the one studentId if it is not found in $canddidateStudentIds
         return array_filter($studentIds, function ($studentId) use ($candidateStudentIds) {
             return !in_array($studentId, $candidateStudentIds);
         });

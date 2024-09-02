@@ -14,6 +14,12 @@
     <div class="mt-4">
         <h3 class="font-semibold underline">Qualifications</h3>
 
+        {{-- CANDIDATE ID (USED FOR TESTING --}}
+{{--        <div class="flex flex-row">--}}
+{{--            <label class="w-1/4 sm:w-1/6 lg:w-1/12">Candidate Id:</label>--}}
+{{--            <div class="font-semibold">{{ $form->candidateId }}</div>--}}
+{{--        </div>--}}
+
         {{-- SCHOOL NAME --}}
         <div class="flex flex-row">
             <label class="w-1/4 sm:w-1/6 lg:w-1/12">School:</label>
@@ -179,7 +185,7 @@
         @endif
 
         {{-- PITCH FILES --}}
-        @if($form->pitchFiles)
+        @if($form->hasPitchFiles)
             @include('components.partials.pitch-files')
         @endif
 

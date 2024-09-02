@@ -51,7 +51,6 @@ class EventInformationComponent extends Component
         $this->emergencyContacts = $this->getEmergencyContacts();
 
         $this->defaultVoicePartDescr = VoicePart::find($this->student->voice_part_id)->descr;
-        //$this->eligibleVersions = $this->student->getEligibleVersions(); // <======   START HERE
         $this->grade = $gradeService->getGrade($this->student->class_of);
 
         $this->school = $this->student->activeSchool();
@@ -68,11 +67,8 @@ class EventInformationComponent extends Component
         $this->requiresHomeAddress = $this->getRequiresHomeAddress();
 
         $this->geostates = Geostate::orderBy('name')->pluck('name', 'id')->toArray();
-
-        //ensure that a row exists for auth()->user() for open events
-        $this->setCandidateRow();
-
     }
+
     public function render()
     {
         return view('livewire.events.event-information-component');
@@ -126,14 +122,8 @@ class EventInformationComponent extends Component
 
     private function getEventsCsv(): string
     {
-        $service = new FindTeacherOpenEventsService();
-
-        foreach($this->coTeacherIds AS $teacherId){
-            $this->events = $service->getTeacherEvents($teacherId);
-        }
-
-        //hide/display registration forms
-        $this->setShowForms();
+        //ensure that events are available
+        $this->setEvents();
 
         //early exit
         if(! count($this->events)){
@@ -142,6 +132,12 @@ class EventInformationComponent extends Component
 
         //isolate version names into an array
         $names = array_column($this->events, 'name');
+
+        //ensure that each event has a candidate row (if eligible)
+        $this->setCandidates();
+
+        //hide/display registration forms
+        $this->setShowForms();
 
         return implode(' | ', $names);
     }
@@ -208,7 +204,7 @@ class EventInformationComponent extends Component
             ->toArray();
     }
 
-    private function setCandidateRow(): void
+    private function setCandidates(): void
     {
         foreach($this->events AS $event){
 
@@ -228,10 +224,30 @@ class EventInformationComponent extends Component
 //                dd($this->events);
 //            }
         }
+
     }
 
+    /**
+     * Register all eligible open events based on the coTeachers available for this student
+     * @return void
+     */
+    private function setEvents(): void
+    {
+        $service = new FindTeacherOpenEventsService();
+
+        foreach($this->coTeacherIds AS $teacherId){
+            $this->events = $service->getTeacherEvents($teacherId);
+        }
+    }
+
+    /**
+     * $this->showForms array is used to control which event form will be displayed
+     * and will default to the first event version found
+     * @return void
+     */
     private function setShowForms(): void
     {
+        //set $this->showForms key as the version id
         foreach($this->events AS $version){
 
             $this->showForms[$version->id] = false;
@@ -240,6 +256,8 @@ class EventInformationComponent extends Component
         //default to settting the first row of the array to true
         $defaultVersionId = array_key_first($this->showForms);
         $this->showForms[$defaultVersionId] = true;
+
+        //set the variables in $this->form
         $this->setVersion($defaultVersionId);
     }
 }

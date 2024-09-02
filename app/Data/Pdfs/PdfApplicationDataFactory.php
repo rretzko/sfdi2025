@@ -30,6 +30,7 @@ class PdfApplicationDataFactory
     {
         $this->school = School::find($this->candidate->school_id);
         $this->student = Student::find($this->candidate->student_id);
+
         $this->teacher = Teacher::find($this->candidate->teacher_id);
         $this->user = User::find($this->student->user_id);
         $this->version = Version::find($candidate->version_id);
