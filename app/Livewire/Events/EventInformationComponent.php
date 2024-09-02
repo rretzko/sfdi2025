@@ -5,6 +5,7 @@ namespace App\Livewire\Events;
 use App\Livewire\Forms\VersionRegistrationForm;
 use App\Models\Candidate;
 use App\Models\Geostate;
+use App\Models\Recording;
 use App\Models\School;
 use App\Models\Student;
 use App\Models\StudentTeacher;
@@ -16,12 +17,18 @@ use App\Services\CalcGradeFromClassOfService;
 use App\Services\CoTeachersService;
 use App\Services\FindTeacherOpenEventsService;
 use App\Services\MakeCandidateRecordsService;
+use App\Services\PathToRegistrationService;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class EventInformationComponent extends Component
 {
+    use WithFileUploads;
+
     public VersionRegistrationForm $form;
+    public array $auditionFiles = [];
     public array $coTeacherIds = [];
     public string $defaultVoicePartDescr = '';
     public array $eligibleVersions = [];
@@ -79,6 +86,20 @@ class EventInformationComponent extends Component
         return $this->redirect('pdf/application/' . $this->form->candidate->id);
     }
 
+    public function recordingReject(string $fileType): void
+    {
+//        $this->reset('showSuccessIndicator', 'successMessage');
+
+        $url = $this->form->recordings[$fileType]['url'];
+
+        //if the db record has been deleted, delete the s3 storage file
+        if ($this->form->recordingReject($fileType)) {
+
+            //delete the file from s3 storage
+            Storage::disk('s3')->delete($url);
+        }
+    }
+
     public function setVersion(int $versionId): void
     {
         $this->form->setVersion($versionId);
@@ -109,6 +130,16 @@ class EventInformationComponent extends Component
             }
 
         }
+
+    }
+
+    public function updatedAuditionFiles($value, $key): void
+    {
+        $fileName = $this->makeFileName($key);
+
+        $this->auditionFiles[$key]->storePubliclyAs('recordings', $fileName, 's3');
+
+        $this->form->recordings[$key]['url'] = 'recordings/'.$fileName;
 
     }
 
@@ -210,6 +241,18 @@ class EventInformationComponent extends Component
         return $event->voiceParts()
             ->pluck('descr', 'id')
             ->toArray();
+    }
+
+    private function makeFileName(string $uploadType): string
+    {
+        //ex: 661234_scales.mp3
+        $fileName = $this->form->candidateId;
+        $fileName .= '_';
+        $fileName .= $uploadType;
+        $fileName .= '.';
+        $fileName .= pathInfo($this->auditionFiles[$uploadType]->getClientOriginalName(), PATHINFO_EXTENSION);
+
+        return $fileName;
     }
 
     private function setCandidates(): void

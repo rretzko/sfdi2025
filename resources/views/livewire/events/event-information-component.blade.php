@@ -163,6 +163,7 @@
             {{-- PRE-CHECK ERRORS --}}
             @include('components.partials.pre-check-errors')
 
+            {{-- APPLICATION --}}
             @if($form->eapplication)
                 @include("components.partials.eapplications.versions.$form->versionId.eapplication")
             @else

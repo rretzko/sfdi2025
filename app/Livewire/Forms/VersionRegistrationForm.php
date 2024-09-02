@@ -82,6 +82,34 @@ class VersionRegistrationForm extends Form
     public int $voicePartId = 63;
     public array $voiceParts = [];
 
+    public function recordingReject(string $fileType): bool
+    {
+        $recording = Recording::query()
+            ->where('candidate_id', $this->candidateId)
+            ->where('version_id', $this->versionId)
+            ->where('file_type', $fileType)
+            ->first();
+
+        $deleted = $recording->delete();
+
+        $this->setRecordingsArray();
+
+        return $deleted;
+    }
+
+    public function recordingSave(string $fileType): bool
+    {
+        return (bool)Recording::create(
+            [
+                'version_id' => $this->versionId,
+                'candidate_id' => $this->candidateId,
+                'file_type' => $fileType,
+                'uploaded_by' => auth()->id(),
+                'url' => $this->recordings[$fileType]['url'],
+            ]
+        );
+    }
+
     public function setVersion(int $versionId): void
     {
         $this->student = Student::where('user_id', auth()->id())->first();
