@@ -4,6 +4,8 @@ namespace App\Livewire\Events;
 
 use App\Livewire\Forms\VersionRegistrationForm;
 use App\Models\Candidate;
+use App\Models\Epayment;
+use App\Models\EpaymentCredentials;
 use App\Models\Geostate;
 use App\Models\Recording;
 use App\Models\School;
@@ -14,6 +16,7 @@ use App\Models\Version;
 use App\Models\VersionConfigRegistrant;
 use App\Models\VoicePart;
 use App\Services\CalcGradeFromClassOfService;
+use App\Services\ConvertToUsdService;
 use App\Services\CoTeachersService;
 use App\Services\FindTeacherOpenEventsService;
 use App\Services\MakeCandidateRecordsService;
@@ -49,6 +52,19 @@ class EventInformationComponent extends Component
     public int $teacherId = 0;
     public array $voiceParts = [];
 
+    //epayment
+    public float $amountDue = 0.00;
+    public string $customProperties = '';
+    public string $email = '';
+    public string $epaymentId = '';
+    public float $feePaid = 0.00;
+    public bool $sandbox = false;
+    public string $sandboxId = 'sb-qw0iu20847075@business.example.com'; //sandbox account
+    public string $sandboxPersonalEmail = 'sb-ndsz820837854@personal.example.com'; //dRkJ4(f)
+    public string $teacherName = '';
+    public int $versionId = 0;
+    public string $versionShortName = '';
+
     public function mount()
     {
         $gradeService = new CalcGradeFromClassOfService();
@@ -74,6 +90,9 @@ class EventInformationComponent extends Component
         $this->requiresHomeAddress = $this->getRequiresHomeAddress();
 
         $this->geostates = Geostate::orderBy('name')->pluck('name', 'id')->toArray();
+
+        //ePayment
+        $this->setEpaymentVars();
     }
 
     public function render()
@@ -103,6 +122,9 @@ class EventInformationComponent extends Component
     public function setVersion(int $versionId): void
     {
         $this->form->setVersion($versionId);
+
+        //reset epayment variables to conform to the new event version
+        $this->setEpaymentVars();
 
         //set all values to false
         $this->showForms = array_map(function(){
@@ -140,7 +162,31 @@ class EventInformationComponent extends Component
         $this->auditionFiles[$key]->storePubliclyAs('recordings', $fileName, 's3');
 
         $this->form->recordings[$key]['url'] = 'recordings/'.$fileName;
+    }
 
+    private function getAmountDue(): float
+    {
+        $due = ConvertToUsdService::penniesToUsd($this->form->version->fee_registration);
+        $paid = $this->getFeePaid();
+
+        return ($paid - $due);
+    }
+
+    private function getCustomProperties(): string
+    {
+        $separator = ' | ';
+
+        $properties = [
+            (string) $this->form->candidate->student->user_id,
+            (string) $this->form->versionId,
+            (string) $this->form->candidate->school_id,
+            (string) $this->amountDue,
+            (string) $this->form->candidateId,
+            'registration', //fee type
+            auth()->user()->name, //additional identification info
+        ];
+
+        return implode($separator, $properties);
     }
 
     private function getEmergencyContacts(): array
@@ -157,6 +203,24 @@ class EventInformationComponent extends Component
         }
 
         return $a;
+    }
+
+    private function getEpaymentId(): string
+    {
+        $ePaymentCredentials = EpaymentCredentials::query()
+            ->where('version_id', $this->form->versionId)
+            ->first();
+
+        if (!$ePaymentCredentials) {
+
+            $ePaymentCredentials = EpaymentCredentials::query()
+                ->where('event_id', $this->form->version->event_id)
+                ->first();
+        }
+
+        return ($ePaymentCredentials)
+            ? $ePaymentCredentials->epayment_id
+            : '';
     }
 
     private function getEventsCsv(): string
@@ -179,6 +243,16 @@ class EventInformationComponent extends Component
         $this->setShowForms();
 
         return implode(' | ', $names);
+    }
+
+    private function getFeePaid(): float
+    {
+        $epayment = Epayment::query()
+            ->where('candidate_id', $this->form->candidateId)
+            ->where('version_id' , $this->form->versionId)
+            ->sum('amount');
+
+        return ConvertToUsdService::penniesToUsd($epayment);
     }
 
     private function getRequiresHomeAddress(): bool
@@ -278,6 +352,20 @@ class EventInformationComponent extends Component
 
     }
 
+    private function setEpaymentVars(): void
+    {
+        $this->sandbox = true;
+
+        $this->amountDue = $this->getAmountDue();
+        $this->customProperties = $this->getCustomProperties();
+        $this->email = auth()->user()->email;
+        $this->epaymentId = $this->getEpaymentId();
+        $this->feePaid = $this->getFeePaid();
+        $this->teacherName = $this->form->teacherFullName;
+        $this->versionShortName = $this->form->version->short_name;
+        $this->versionId = $this->form->versionId;
+    }
+
     /**
      * Register all eligible open events based on the coTeachers available for this student
      * @return void
@@ -304,9 +392,11 @@ class EventInformationComponent extends Component
             $this->showForms[$version->id] = false;
         }
 
-        //default to settting the first row of the array to true
+        //if a versionId has not been set, default to settting the first row of the array to true
         $defaultVersionId = array_key_first($this->showForms);
-        $this->showForms[$defaultVersionId] = true;
+        ($this->form->versionId)
+            ? $this->showForms[$this->form->versionId] = true
+            : $this->showForms[$defaultVersionId] = true;
 
         //set the variables in $this->form
         $this->setVersion($defaultVersionId);

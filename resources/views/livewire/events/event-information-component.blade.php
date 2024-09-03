@@ -191,12 +191,22 @@
         @endif
 
         {{-- ePayment --}}
-        @if($form->ePay)
-            <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
-                <label for="" class="font-semibold">Payment</label>
-                {{ serialize($form->fileUploads) }}
-            </fieldset>
-        @endif
+        <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300 border-b-gray-300">
+            <label for="" class="font-semibold">Payments</label>
+            @if($form->ePay)
+                @if($amountDue)
+                    @include('components.partials.payPal' )
+                @else
+                    <div class="ml-4 py-2">
+                        Fee Paid: ${{ $feePaid }}
+                    </div>
+                @endif
+            @else
+                <div class="ml-4 py-2">
+                    Please see your teacher ({{ $teacherName }}) for all payments.
+                </div>
+            @endif
+        </fieldset>
 
     </div>
 
