@@ -25,7 +25,7 @@
         {{-- MAIN --}}
         <div id="main" class="">
 
-            <img id="background" class=" w-full" alt="musicStand Logo" src="https://auditionsuite-production.s3.amazonaws.com/musicStand.svg" />
+            <img id="background" class="mx-auto w-full sm:w-1/2 " alt="musicStand Logo" src="https://auditionsuite-production.s3.amazonaws.com/musicStand.svg" />
 
         </div>
 

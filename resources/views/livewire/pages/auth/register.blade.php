@@ -30,9 +30,39 @@ new #[Layout('layouts.guest')] class extends Component
 
         event(new Registered($user = User::create($validated)));
 
+        $this->updateNames($user);
+
+        $this->makeStudent($user);
+
         Auth::login($user);
 
         $this->redirect(route('dashboard', absolute: false), navigate: true);
+    }
+
+    /**
+     * @param  User  $user
+     * @return void
+     */
+    private function makeStudent(User $user):void
+    {
+        \App\Models\Student::create(
+            [
+                'id' => $user->id, //synchronize id and user_id
+                'user_id' => $user->id,
+                'voice_part_id' => 63, //default soprano i
+                'class_of' => date('Y'),
+                'birthday' => date('Y-m-d'),
+            ]
+        );
+    }
+
+    private function updateNames(User $user): void
+    {
+        $service = new \App\Services\SplitNameIntoNamePartsService($user->name);
+
+        $parts = $service->getNameParts();
+
+        dd($parts);
     }
 }; ?>
 

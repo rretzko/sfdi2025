@@ -23,7 +23,7 @@ new class extends Component
     {
         $this->student = Student::where('user_id', auth()->id())->first();
         $this->studentId = $this->student->id;
-        $this->schoolId = $this->student->schools()->wherePivot('active', 1)->first()->id;
+        $this->schoolId = $this->student->schools()->wherePivot('active', 1)->first()->id ?? 0;
         $this->teacherId = $this->getTeacherId();
         $this->teachers = $this->buildTeachers();
         $this->schools = $this->buildSchools();
@@ -94,7 +94,7 @@ new class extends Component
         return \Illuminate\Support\Facades\DB::table('student_teacher')
             ->where('student_id', $this->studentId)
             ->first()
-            ->teacher_id;
+            ->teacher_id ?? 0;
     }
 
     private function setSchoolsToInactive(): void

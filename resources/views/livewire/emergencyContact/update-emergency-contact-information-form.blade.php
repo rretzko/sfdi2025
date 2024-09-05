@@ -120,6 +120,8 @@ new class extends Component
     {
         return (bool)\App\Models\EmergencyContact::create(
             [
+                'name' => $this->emergencyContactName,
+                'email' => $this->emergencyContactEmail,
                 'best_phone' => $this->bestPhone,
                 'emergencyContactEmail' => $this->emergencyContactEmail,
                 'emergencyContactName' => $this->emergencyContactName,

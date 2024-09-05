@@ -28,7 +28,7 @@ new class extends Component
     {
         $this->student = Student::where('user_id', auth()->id())->first();
 
-         $this->birthday = $this->student->birthday;
+         $this->birthday = $this->student->birthday ?? date('Y-m-d');
         $this->classOf = $this->student->class_of;
         $this->height = $this->student->height;
         $this->shirtSize = $this->student->shirt_size;
