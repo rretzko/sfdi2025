@@ -70,7 +70,7 @@ class FindTeacherOpenEventsService
     }
 
     private function getOpenVersions()
-    {return [];
+    {
         return Version::query()
             ->join('version_config_dates AS studentOpen', 'studentOpen.version_id', '=', 'versions.id')
             ->join('version_config_dates AS studentClose', 'studentClose.version_id', '=', 'versions.id')

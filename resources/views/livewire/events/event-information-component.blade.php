@@ -212,19 +212,4 @@
     </div>
     @endif
 
-{{--    <div class="mt-8">--}}
-{{--        <h2 class=" font-semibold underline">To Dos</h2>--}}
-{{--        <ul class="ml-4 list-decimal">--}}
-{{--            <li class="line-through">Find School</li>--}}
-{{--            <li class="line-through">Find Teachers</li>--}}
-{{--            <li class="line-through">Find Student Grade</li>--}}
-{{--            <li class="line-through">Find Student Default voice part</li>--}}
-{{--            <li class="line-through">Find Open events with these teachers as obligated or better</li>--}}
-{{--            <li class="line-through">Validate User properties against event requirements.</li>--}}
-{{--            <li class="line-through">Provide actionable information for user to rectify or return to teacher, and/or</li>--}}
-{{--            <li class="line-through">Ensure that candidate row exists</li>--}}
-{{--            <li>Open populated event registration form.</li>--}}
-{{--        </ul>--}}
-{{--    </div>--}}
-
 </section>
