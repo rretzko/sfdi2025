@@ -6,6 +6,7 @@ use App\Livewire\Forms\VersionRegistrationForm;
 use App\Models\Candidate;
 use App\Models\Epayment;
 use App\Models\EpaymentCredentials;
+use App\Models\Event;
 use App\Models\Geostate;
 use App\Models\Recording;
 use App\Models\School;
@@ -21,6 +22,7 @@ use App\Services\CoTeachersService;
 use App\Services\FindTeacherOpenEventsService;
 use App\Services\MakeCandidateRecordsService;
 use App\Services\PathToRegistrationService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -166,25 +168,37 @@ class EventInformationComponent extends Component
 
     private function getAmountDue(): float
     {
-        $due = ConvertToUsdService::penniesToUsd($this->form->version->fee_registration);
-        $paid = $this->getFeePaid();
+        $balanceDue = 0;
 
-        return ($paid - $due);
+        if(isset($this->form->version)) {
+
+            $due = ConvertToUsdService::penniesToUsd($this->form->version->fee_registration);
+            $paid = $this->getFeePaid();
+
+            $balanceDue = ($paid - $due);
+        }
+
+        return $balanceDue;
     }
 
     private function getCustomProperties(): string
     {
         $separator = ' | ';
 
-        $properties = [
-            (string) $this->form->candidate->student->user_id,
-            (string) $this->form->versionId,
-            (string) $this->form->candidate->school_id,
-            (string) $this->amountDue,
-            (string) $this->form->candidateId,
-            'registration', //fee type
-            auth()->user()->name, //additional identification info
-        ];
+        $properties = [];
+
+        if(isset($this->form->candidate)) {
+
+            $properties = [
+                (string) $this->form->candidate->student->user_id,
+                (string) $this->form->versionId,
+                (string) $this->form->candidate->school_id,
+                (string) $this->amountDue,
+                (string) $this->form->candidateId,
+                'registration', //fee type
+                auth()->user()->name, //additional identification info
+            ];
+        }
 
         return implode($separator, $properties);
     }
@@ -211,7 +225,7 @@ class EventInformationComponent extends Component
             ->where('version_id', $this->form->versionId)
             ->first();
 
-        if (!$ePaymentCredentials) {
+        if (!$ePaymentCredentials && isset($this->form->version)) {
 
             $ePaymentCredentials = EpaymentCredentials::query()
                 ->where('event_id', $this->form->version->event_id)
@@ -257,9 +271,9 @@ class EventInformationComponent extends Component
 
     private function getRequiresHomeAddress(): bool
     {
-        $version = Version::find($this->form->versionId);
+        $version = Version::find($this->form->versionId) ?? new Version();
 
-        return (bool)!$version->student_home_address;
+        return (bool)! $version->student_home_address ?? 0;
     }
 
     private function getTeachersCsv(): string
@@ -309,7 +323,7 @@ class EventInformationComponent extends Component
     private function getVoiceParts(): array
     {
         $version = Version::find($this->form->versionId);
-        $event = $version->event;
+        $event = $version ? $version->event : new Event();
         $ensembles = $event->eventEnsembles;
 
         return $event->voiceParts()
@@ -354,16 +368,18 @@ class EventInformationComponent extends Component
 
     private function setEpaymentVars(): void
     {
-        $this->sandbox = true;
+        $this->sandbox = false;
 
-        $this->amountDue = $this->getAmountDue();
-        $this->customProperties = $this->getCustomProperties();
-        $this->email = auth()->user()->email;
-        $this->epaymentId = $this->getEpaymentId();
-        $this->feePaid = $this->getFeePaid();
-        $this->teacherName = $this->form->teacherFullName;
-        $this->versionShortName = $this->form->version->short_name;
-        $this->versionId = $this->form->versionId;
+        if(isset($this->form->version)) {
+            $this->amountDue = $this->getAmountDue();
+            $this->customProperties = $this->getCustomProperties();
+            $this->email = auth()->user()->email;
+            $this->epaymentId = $this->getEpaymentId();
+            $this->feePaid = $this->getFeePaid();
+            $this->teacherName = $this->form->teacherFullName;
+            $this->versionShortName = $this->form->version->short_name;
+            $this->versionId = $this->form->versionId;
+        }
     }
 
     /**
@@ -377,6 +393,8 @@ class EventInformationComponent extends Component
         foreach($this->coTeacherIds AS $teacherId){
             $this->events = $service->getTeacherEvents($teacherId);
         }
+
+        Log::info('***** Event count: ' . count($this->events));
     }
 
     /**
