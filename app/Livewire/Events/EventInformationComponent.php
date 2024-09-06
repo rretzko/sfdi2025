@@ -4,6 +4,7 @@ namespace App\Livewire\Events;
 
 use App\Livewire\Forms\VersionRegistrationForm;
 use App\Models\Candidate;
+use App\Models\EmergencyContact;
 use App\Models\Epayment;
 use App\Models\EpaymentCredentials;
 use App\Models\Event;
@@ -99,7 +100,10 @@ class EventInformationComponent extends Component
 
     public function render()
     {
-        return view('livewire.events.event-information-component');
+        return view('livewire.events.event-information-component',
+        [
+            'applicationErrors' => $this->setApplicationErrors(),
+        ]);
     }
 
     public function downloadApp()
@@ -341,6 +345,38 @@ class EventInformationComponent extends Component
         $fileName .= pathInfo($this->auditionFiles[$uploadType]->getClientOriginalName(), PATHINFO_EXTENSION);
 
         return $fileName;
+    }
+
+    private function setApplicationErrors(): array
+    {
+        //clear artifacts
+        $a = [];
+
+//      MISSING VOICE PART
+        if(! $this->form->voicePartId){
+            $a[] = 'You must select and save a voice part before you can complete your application.';
+        }
+
+//      MISSING EMERGENCY CONTACT
+        if(! $this->form->emergencyContactId){
+            $a[] = 'You must select and save an emergency contact before you can complete your application.';
+        }
+
+//      MISSING EMERGENCY CONTACT BEST PHONE --}}
+        $ec = $this->form->emergencyContactId ? EmergencyContact::find($this->form->emergencyContactId) : new EmergencyContact();
+        $bestPhoneType = $ec ? $ec->best_phone : 'mobile';
+        $property = 'phone_' . $bestPhoneType;
+        $phoneNumber = $ec ? $ec->$property : '';
+        if(! $phoneNumber){
+            $a[] = "Your emergency contact must have a 'best phone' selected before you can complete your application.";
+        }
+
+//      MISSING HOME ADDRESS
+        if($this->form->requiresHomeAddress && (! $this->form->addressString)){
+            $a[] = 'Your home address is required by the event.';
+        }
+
+        return $a;
     }
 
     private function setCandidates(): void

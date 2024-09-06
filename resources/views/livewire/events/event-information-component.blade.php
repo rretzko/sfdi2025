@@ -118,7 +118,7 @@
         </div>
 
         {{-- HOME ADDRESS --}}
-        @if($requiresHomeAddress)
+        @if($form->requiresHomeAddress)
             @include('components.partials.home-address')
         @endif {{-- end of requiresHomeAddress --}}
 
@@ -161,22 +161,31 @@
         <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
             <label for="" class="font-semibold">Application</label>
 
-            {{-- PRE-CHECK ERRORS --}}
-            @include('components.partials.pre-check-errors')
-
-            {{-- APPLICATION --}}
-            @if($form->eapplication)
-                @include("components.partials.eapplications.versions.$form->versionId.eapplication")
+            {{-- PRE-CHECK APPLICATION ERRORS --}}
+            @if(count($applicationErrors))
+                <h3 class="font-semibold text-red-600 underline">
+                    The following must be corrected before an application can be prepared:
+                </h3>
+                <ul class="ml-8 list-disc">
+                    @foreach($applicationErrors AS $message)
+                        <li class="text-red-600">{{ $message }}</li>
+                    @endforeach
+                </ul>
             @else
-                <div>
-                    <button
-                        wire:click="downloadApp()"
-                        type="button"
-                        class="bg-indigo-500 text-white text-xs px-2 rounded-lg shadow-lg"
-                    >
-                        Click to download your application
-                    </button>
-                </div>
+                {{-- EAPPLICATION --}}
+                @if($form->eapplication)
+                    @include("components.partials.eapplications.versions.$form->versionId.eapplication")
+                @else {{-- BUTTON TO DOWNLOAD APPLICATION --}}
+                    <div>
+                        <button
+                            wire:click="downloadApp()"
+                            type="button"
+                            class="bg-indigo-500 text-white text-xs px-2 rounded-lg shadow-lg"
+                        >
+                            Click to download your application
+                        </button>
+                    </div>
+                @endif
             @endif
 
         </fieldset>

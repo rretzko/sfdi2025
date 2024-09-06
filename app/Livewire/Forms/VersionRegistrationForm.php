@@ -35,6 +35,7 @@ class VersionRegistrationForm extends Form
     public string $address1 = '';
     public string $address2 = '';
     public string $addressString = '';
+    public array $applicationErrors = [];
     public Candidate $candidate;
     public int $candidateId = 0;
     public string $candidateVoicePartDescr = '';
@@ -63,6 +64,7 @@ class VersionRegistrationForm extends Form
     public string $pronounDescr = '';
     public string $pronounPossessive = '';
     public array $recordings = []; //store Recording object details [fileType][url/approved datetime] = value
+    public bool $requiresHomeAddress = false;
     public string $schoolName = '';
     public bool $signatureGuardian = false;
     public bool $signatureStudent = false;
@@ -130,6 +132,7 @@ class VersionRegistrationForm extends Form
         $this->footInch = $this->getFootInch();
         $this->phoneHome = $this->getStudentPhone('home');
         $this->phoneMobile = $this->getStudentPhone('mobile');
+        $this->requiresHomeAddress = $this->version->student_home_address;
 
         $this->voiceParts = $this->getVoiceParts();
 
@@ -141,7 +144,7 @@ class VersionRegistrationForm extends Form
         $this->candidateVoicePartDescr = VoicePart::find($this->candidate->voice_part_id)->descr;
         $this->emergencyContactId = $this->candidate->emergency_contact_id;
         $this->emergencyContactString = $this->getEmergencyContactString();
-        $this->emergencyContactName = EmergencyContact::find($this->emergencyContactId)->name;
+        $this->emergencyContactName = EmergencyContact::find($this->emergencyContactId)->name ?? '';
         $this->programName = $this->candidate->program_name;
         $pronoun = Pronoun::find($this->candidate->student->user->pronoun_id);
         $this->pronounDescr = $pronoun->descr;
@@ -183,13 +186,14 @@ class VersionRegistrationForm extends Form
 
         //address string
         $address = Address::where('user_id', $this->student->user_id)->first();
-        $this->addressString = AddressValueObject::getStringVo($address);
+        $this->addressString = $address ? AddressValueObject::getStringVo($address) : '';
 
         //signatures
         $this->signatureGuardian = $this->getSignature('guardian');
         $this->signedAtGuardian = $this->getSignedAt('guardian');
         $this->signatureStudent = $this->getSignature('student');
         $this->signedAtStudent = $this->getSignedAt('student');
+
     }
 
     public function updateAddress1()
@@ -284,7 +288,7 @@ class VersionRegistrationForm extends Form
 
     private function getEmergencyContactString(): string
     {
-        $ec = EmergencyContact::find($this->emergencyContactId);
+        $ec = EmergencyContact::find($this->emergencyContactId) ?? new EmergencyContact();
         $bestPhone = $ec->best_phone;
         $bestPhoneNumber = $bestPhone . '_phone';
         $str = $ec->name;
@@ -360,6 +364,8 @@ class VersionRegistrationForm extends Form
             ->pluck('descr', 'id')
             ->toArray();
     }
+
+
 
     /**
      * Return true if version allows ePayments by the student
