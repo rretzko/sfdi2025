@@ -172,17 +172,17 @@ class EventInformationComponent extends Component
 
     private function getAmountDue(): float
     {
-        $balanceDue = 0;
-
-        if(isset($this->form->version)) {
-
-            $due = ConvertToUsdService::penniesToUsd($this->form->version->fee_registration);
-            $paid = $this->getFeePaid();
-
-            $balanceDue = ($paid - $due);
+        //early exit
+        if(! isset($this->form->version)){
+            return 0.00;
         }
 
-        return $balanceDue;
+        $feeRegistration = $this->form->version->fee_registration;
+        $feePaid = $this->getFeePaid();
+
+        $amountDueInPennies = ($feeRegistration - $feePaid);
+
+        return ConvertToUsdService::penniesToUsd($amountDueInPennies);
     }
 
     private function getCustomProperties(): string
@@ -265,12 +265,10 @@ class EventInformationComponent extends Component
 
     private function getFeePaid(): float
     {
-        $epayment = Epayment::query()
+        return Epayment::query()
             ->where('candidate_id', $this->form->candidateId)
             ->where('version_id' , $this->form->versionId)
             ->sum('amount');
-
-        return ConvertToUsdService::penniesToUsd($epayment);
     }
 
     private function getRequiresHomeAddress(): bool

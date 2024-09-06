@@ -11,7 +11,7 @@
     </div>
 
     <!-- Identify your business so that you can collect the payments. -->
-    <input type="hidden" name="business" value="{{ $sandbox ? $sandboxId : $epaymentId }}">
+    <input type="hidden" name="business" value="{{ $sandbox ? $sandboxId : $form->ePaymentId }}">
     <input type="hidden" name="notify_url"
            value="https://thedirectorsroom.com/epaymentUpdate" >
     <input type="hidden" name="custom" value="{{ $customProperties }}">

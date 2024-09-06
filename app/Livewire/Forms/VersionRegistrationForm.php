@@ -5,6 +5,7 @@ namespace App\Livewire\Forms;
 use App\Models\Address;
 use App\Models\Candidate;
 use App\Models\EmergencyContact;
+use App\Models\EpaymentCredentials;
 use App\Models\PhoneNumber;
 use App\Models\Pronoun;
 use App\Models\Recording;
@@ -48,6 +49,7 @@ class VersionRegistrationForm extends Form
     public string $emergencyContactString = '';
     public string $emergencyContactBestPhone = 'missing';
     public bool $ePay = true;
+    public string $ePaymentId = '';
     public float $feeAudition = 0.00;
     public float $feeParticipation = 0.00;
     public array $fileUploads = [];
@@ -182,6 +184,7 @@ class VersionRegistrationForm extends Form
         $this->setPitchFiles();
 
         //ePayment
+        $this->ePaymentId = $this->getEpaymentId();
         $this->setEpayment();
 
         //address string
@@ -193,7 +196,6 @@ class VersionRegistrationForm extends Form
         $this->signedAtGuardian = $this->getSignedAt('guardian');
         $this->signatureStudent = $this->getSignature('student');
         $this->signedAtStudent = $this->getSignedAt('student');
-
     }
 
     public function updateAddress1()
@@ -296,6 +298,26 @@ class VersionRegistrationForm extends Form
         $str .= ", <span class='font-semibold'>" . $ec->$bestPhoneNumber . ' (' . substr($bestPhone,0,1) . ')</span>';
 
         return $str;
+    }
+
+    private function getEpaymentId(): string
+    {
+        $eventId = $this->version->event->id;
+
+        // Check for version credentials first
+        $versionCredential = EpaymentCredentials::where('version_id', $this->versionId)->first();
+        if ($versionCredential) {
+            return $versionCredential->epayment_id;
+        }
+
+        // Check for event credentials if version credentials do not exist
+        $eventCredential = EpaymentCredentials::where('event_id', $eventId)->first();
+        if ($eventCredential) {
+            return $eventCredential->epayment_id;
+        }
+
+        // Return empty string if neither exists
+        return '';
     }
 
     private function getFootInch(): string
