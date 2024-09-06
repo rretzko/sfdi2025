@@ -26,8 +26,9 @@
         @endif
 
         <a
-            href="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url('public_pdfs/quickStart_sfdi_20250906.pdf') }}"
+            href="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url('public-pdfs/quickStart_sfdi_20250906.pdf') }}"
             class="text-right rounded-md px-3 sm:py-2 text-black text-xs sm:text-sm ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
+            target="_blank"
         >
             QuickStart
         </a>
