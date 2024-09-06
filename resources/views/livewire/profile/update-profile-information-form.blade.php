@@ -10,6 +10,8 @@ new class extends Component
 {
     public string $name = '';
     public string $email = '';
+    public int $pronoun_id = 1; //default
+    public array $pronouns = [];
 
     /**
      * Mount the component.
@@ -18,6 +20,8 @@ new class extends Component
     {
         $this->name = Auth::user()->name;
         $this->email = Auth::user()->email;
+        $this->pronoun_id = Auth::user()->pronoun_id;
+        $this->pronouns = \App\Models\Pronoun::pluck('descr','id')->toArray();
     }
 
     /**
@@ -30,6 +34,7 @@ new class extends Component
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
+            'pronoun_id' => ['required','int','exists:pronouns,id'],
         ]);
 
         $user->fill($validated);
@@ -102,6 +107,19 @@ new class extends Component
                     @endif
                 </div>
             @endif
+        </div>
+
+        <div>
+            <x-input-label for="pronoun_id" :value="__('Preferred Pronoun')" />
+            <select wire:model.live="pronoun_id" >
+                @foreach($pronouns AS $id => $pronounDescr)
+                    <option value="{{ $id }}">
+                        {{ $pronounDescr }}
+                    </option>
+                @endforeach
+            </select>
+
+            <x-input-error class="mt-2" :messages="$errors->get('pronounId')" />
         </div>
 
         <div class="flex items-center gap-4">

@@ -62,7 +62,15 @@ new #[Layout('layouts.guest')] class extends Component
 
         $parts = $service->getNameParts();
 
-        dd($parts);
+        $user->update(
+            [
+                'prefix_name' => $parts['prefix_name'],
+                'first_name' => $parts['first_name'],
+                'middle_name' => $parts['middle_name'],
+                'last_name' => $parts['last_name'],
+                'suffix_name' => $parts['suffix_name'],
+            ]
+        );
     }
 }; ?>
 
