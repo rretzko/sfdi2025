@@ -6,6 +6,8 @@ namespace App\Models;
 use App\Models\SchoolTeacher;
 use App\Services\FullNameAlphaService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -67,5 +69,10 @@ class User extends Authenticatable
             ->join('teachers', 'teachers.id', '=', 'school_teacher.teacher_id')
             ->where('teachers.user_id', '=', $this->id)
             ->exists();
+    }
+
+    public function pronoun(): BelongsTo
+    {
+        return $this->belongsTo(Pronoun::class);
     }
 }

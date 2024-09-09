@@ -29,6 +29,10 @@ new class extends Component
         $this->schools = $this->buildSchools();
     }
 
+    /**
+     * Update the teachers' drop-down box whenever the schoolId changes
+     * @return void
+     */
     public function updatedSchoolId(): void
     {
         $this->teachers = $this->buildTeachers();
@@ -52,6 +56,9 @@ new class extends Component
 
         //update/create student-teacher relationship
         $this->setStudentTeacher();
+
+        //send courtesy  email to teacher
+        $this->sendNewStudentEmail();
 
         $this->dispatch('school-information-updated', name: $this->student->user->name);
     }
@@ -87,6 +94,16 @@ new class extends Component
             ->orderBy('users.first_name')
             ->pluck('users.name','teachers.id')
             ->toArray();
+    }
+
+    private function sendNewStudentEmail(): void
+    {
+        if($this->teacherId){
+
+            $teacher = \App\Models\Teacher::find($this->teacherId);
+
+            Illuminate\Support\Facades\Mail::to($teacher->user)->send( new \App\Mail\StudentAddedToRosterMail($teacher));
+        }
     }
 
     private function getTeacherId(): int
