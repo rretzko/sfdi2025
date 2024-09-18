@@ -8,7 +8,11 @@
     <div class="flex flex-col justify-start items-start space-y-2">
         @foreach($form->pitchFiles AS $pitchFile)
             @if($pitchFile['file_type'] === 'pdf')
-                <a href="https://auditionsuite-production.s3.amazonaws.com/{{ $pitchFile['url'] }}" target="_blank">
+                <a
+                    href="https://auditionsuite-production.s3.amazonaws.com/{{ $pitchFile['url'] }}"
+                    wire:key="pitch-file-{{ $pitchFile['id'] }}"
+                    target="_blank"
+                >
                     <button
                         type="button"
                         class="bg-green-500 text-white text-xs px-2 border border-green-800 shadow-lg rounded-lg"
