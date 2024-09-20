@@ -428,7 +428,7 @@ class EventInformationComponent extends Component
             $this->events = $service->getTeacherEvents($teacherId);
         }
 
-        Log::info('***** Event count: ' . count($this->events));
+//        Log::info('***** Event count: ' . count($this->events));
     }
 
     /**

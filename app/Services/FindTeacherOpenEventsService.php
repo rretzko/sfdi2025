@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\Student;
 use App\Models\Teacher;
 use App\Models\Version;
+use App\Models\VersionConfigDate;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -54,7 +55,6 @@ class FindTeacherOpenEventsService
 
     private function filterVersionsByParticipantStatus(array $openVersions, int $teacherId): array
     {
-        $filtered = [];
         $userId = Teacher::find($teacherId)->user_id;
         $participatingStatuses = ['obligated','participating'];
         $versionIds = array_column($openVersions, 'id');
@@ -102,5 +102,10 @@ class FindTeacherOpenEventsService
         }
 
         return $clean;
+    }
+
+    private function test(): void
+    {
+
     }
 }
