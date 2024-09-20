@@ -23,6 +23,7 @@ class FindTeacherOpenEventsService
 
         //filter versions for student grade eligibility with the auth()->user();
         //return [id, version_name] for those versions
+
         return $this->filterVersionsByGradeEligibility($filteredTeacherVersions);
     }
 

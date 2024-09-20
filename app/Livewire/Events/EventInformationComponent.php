@@ -425,10 +425,8 @@ class EventInformationComponent extends Component
         $service = new FindTeacherOpenEventsService();
 
         foreach($this->coTeacherIds AS $teacherId){
-            $this->events = $service->getTeacherEvents($teacherId);
+            $this->events = array_merge($this->events, $service->getTeacherEvents($teacherId));
         }
-
-//        Log::info('***** Event count: ' . count($this->events));
     }
 
     /**
