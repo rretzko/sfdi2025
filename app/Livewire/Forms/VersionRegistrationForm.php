@@ -380,9 +380,10 @@ class VersionRegistrationForm extends Form
     {
         $version = Version::find($this->versionId);
         $event = $version->event;
-        $ensembles = $event->eventEnsembles;
+        $service = new CalcGradeFromClassOfService();
+        $grade = $service->getGrade($this->student->class_of);
 
-        return $event->voiceParts()
+        return $event->voicePartsByGrade($grade)
             ->pluck('descr', 'id')
             ->toArray();
     }

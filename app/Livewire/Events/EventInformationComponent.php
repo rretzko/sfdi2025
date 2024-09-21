@@ -326,7 +326,8 @@ class EventInformationComponent extends Component
     {
         $version = Version::find($this->form->versionId);
         $event = $version ? $version->event : new Event();
-        $ensembles = $event->eventEnsembles;
+        $service = new CalcGradeFromClassOfService();
+        $grade = $service->getGrade($this->student->class_of);
 
         return $event->voiceParts()
             ->pluck('descr', 'id')

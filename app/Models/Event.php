@@ -63,6 +63,11 @@ class Event extends Model
         return $this->hasMany(Version::class)->orderByDesc('senior_class_of');
     }
 
+    /**
+     * Return collection of unique VoicePart objects from
+     * EventEnsembles owned by the event
+     * @return Collection
+     */
     public function voiceParts(): Collection
     {
         $voiceParts = collect();
@@ -72,6 +77,29 @@ class Event extends Model
             $voiceParts = $voiceParts->merge($ensemble->voiceParts())
                 ->unique('id')
                 ->sortBy('order_by');
+        }
+
+        return $voiceParts;
+    }
+
+    /**
+     * Return collection of unique VoicePart objects from
+     * EventEnsembles owned by the event
+     * matching the grade of the user
+     * @return Collection
+     */
+    public function voicePartsByGrade(int $grade): Collection
+    {
+        $voiceParts = collect();
+
+        foreach($this->eventEnsembles AS $ensemble){
+            $grades = explode(',', $ensemble->grades);
+            if(in_array($grade, $grades)) {
+
+                $voiceParts = $voiceParts->merge($ensemble->voiceParts())
+                    ->unique('id')
+                    ->sortBy('order_by');
+            }
         }
 
         return $voiceParts;
