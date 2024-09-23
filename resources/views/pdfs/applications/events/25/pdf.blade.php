@@ -374,9 +374,7 @@
                         <li>
                             An audition fee of ${{ $dto['auditionFee'] }} per student will be charged. In addition,
                             chorus students
-                            accepted will be assessed a participation fee of ${{ $dto['participationFee'] }}. The music
-                            will be
-                            theirs to keep.
+                            accepted will be assessed a participation fee of ${{ $dto['participationFee'] }}.
                         </li>
                     </ol>
                 </td>

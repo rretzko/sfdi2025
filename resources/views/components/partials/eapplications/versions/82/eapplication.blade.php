@@ -162,10 +162,8 @@
                 <td colspan="2">
                     An audition Fee of ${{ $form->feeAudition }} per student will be charged. In addition, chorus
                     students
-                    accepted will be assessed a participation fee of ${{ $form->feeParticipation }}. The music is
-                    theirs
-                    to keep.<br/>
-                    Payment Method: <b>none found</b>
+                    accepted will be assessed a participation fee of ${{ $form->feeParticipation }}. <br/>
+{{--                    Payment Method: <b>none found</b>--}}
                 </td>
             </tr>
         </table>
@@ -388,9 +386,7 @@
                         <li>
                             An audition fee of ${{ $form->feeAudition }} per student will be charged. In addition,
                             chorus students
-                            accepted will be assessed a participation fee of ${{ $form->feeParticipation }}. The music
-                            will be
-                            theirs to keep.
+                            accepted will be assessed a participation fee of ${{ $form->feeParticipation }}.
                         </li>
                     </ol>
                 </td>
