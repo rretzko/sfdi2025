@@ -403,7 +403,7 @@
                     Student Certification
                 </td>
                 <td class="data">
-                    I certify that I will accept the decisions of hte judges and conductors as binding and if selected
+                    I certify that I will accept the decisions of the judges and conductors as binding and if selected
                     will accept membership in this organization. I understand that membership in this organization
                     will be terminated if I fail to perform satisfactorily within my own school group or if I fail to
                     adhere to the rules set forth above.
