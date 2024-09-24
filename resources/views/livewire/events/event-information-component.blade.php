@@ -191,7 +191,7 @@
         </fieldset>
 
         {{-- UPLOADS --}}
-        @if($form->uploadTypesCount)
+        @if($form->uploadTypesCount)<div>{{ $form->uploadTypesCount }}</div>
             @include('components.partials.audition-recordings')
         @endif
 
