@@ -410,7 +410,7 @@ class EventInformationComponent extends Component
             $this->customProperties = $this->getCustomProperties();
             $this->email = auth()->user()->email;
             $this->epaymentId = $this->getEpaymentId();
-            $this->feePaid = $this->getFeePaid();
+            $this->feePaid = ConvertToUsdService::penniesToUsd($this->getFeePaid());
             $this->teacherName = $this->form->teacherFullName;
             $this->versionShortName = $this->form->version->short_name;
             $this->versionId = $this->form->versionId;

@@ -208,7 +208,7 @@
                     @include('components.partials.payPal' )
                 @else
                     <div class="ml-4 py-2">
-                        Fee Paid: ${{ $feePaid }}
+                        Fee Paid: ${{ number_format($feePaid,2) }}
                     </div>
                 @endif
             @else
