@@ -16,6 +16,7 @@
                             >
                             " Your browser does not support the audio element. "
                         </audio>
+
                         <div class="flex flex-row w-full mt-2 space-x-4 justify-center">
                             @if(array_key_exists('approved', $form->recordings[$uploadType]) &&
                                 strlen($form->recordings[$uploadType]['approved']))

@@ -167,7 +167,11 @@ class EventInformationComponent extends Component
 
         $this->auditionFiles[$key]->storePubliclyAs('recordings', $fileName, 's3');
 
+        //store the url reference for saving
         $this->form->recordings[$key]['url'] = 'recordings/'.$fileName;
+
+        $this->form->recordingSave($key);
+
     }
 
     private function getAmountDue(): float
