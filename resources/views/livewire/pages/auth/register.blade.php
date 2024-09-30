@@ -45,12 +45,15 @@ new #[Layout('layouts.guest')] class extends Component
      */
     private function makeStudent(User $user):void
     {
+        $service = new \App\Services\CalcSeniorYearService();
+        $seniorYear = $service->getSeniorYear();
+
         \App\Models\Student::create(
             [
                 'id' => $user->id, //synchronize id and user_id
                 'user_id' => $user->id,
                 'voice_part_id' => 63, //default soprano i
-                'class_of' => date('Y'),
+                'class_of' => $seniorYear,
                 'birthday' => date('Y-m-d'),
             ]
         );
@@ -62,15 +65,13 @@ new #[Layout('layouts.guest')] class extends Component
 
         $parts = $service->getNameParts();
 
-        $user->update(
-            [
-                'prefix_name' => $parts['prefix_name'],
-                'first_name' => $parts['first_name'],
-                'middle_name' => $parts['middle_name'],
-                'last_name' => $parts['last_name'],
-                'suffix_name' => $parts['suffix_name'],
-            ]
-        );
+        $user->prefix_name = $parts['prefix_name'];
+        $user->first_name = $parts['first_name'];
+        $user->middle_name = $parts['middle_name'];
+        $user->last_name = $parts['last_name'];
+        $user->suffix_name = $parts['suffix_name'];
+
+        $user->save();
     }
 }; ?>
 
