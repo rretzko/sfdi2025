@@ -15,6 +15,9 @@ new #[Layout('layouts.guest')] class extends Component
     public string $password = '';
     public string $password_confirmation = '';
 
+    //Honeypot field
+    public string $poohBear = '';
+
     /**
      * Handle an incoming registration request.
      */
@@ -27,6 +30,12 @@ new #[Layout('layouts.guest')] class extends Component
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
+
+        if($this->poohBear != ''){
+            logger('**** SPAMMER DETECTED using name: ' . $validated['name'] . ' ****');
+            $this->reset();
+            return;
+        }
 
         event(new Registered($user = User::create($validated)));
 
@@ -77,6 +86,7 @@ new #[Layout('layouts.guest')] class extends Component
 
 <div>
     <form wire:submit="register">
+
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />
@@ -112,6 +122,10 @@ new #[Layout('layouts.guest')] class extends Component
                             name="password_confirmation" required autocomplete="new-password" />
 
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <input type="text" aria-hidden="true" class="block" wire:model="poohBear" />
         </div>
 
         <div class="flex items-center justify-end mt-4">
