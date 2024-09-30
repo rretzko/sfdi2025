@@ -125,7 +125,7 @@ new #[Layout('layouts.guest')] class extends Component
         </div>
 
         <div class="mt-4">
-            <input type="text" aria-hidden="true" class="block" wire:model="poohBear" />
+            <input type="text" aria-hidden="true" class="hidden" wire:model="poohBear" />
         </div>
 
         <div class="flex items-center justify-end mt-4">

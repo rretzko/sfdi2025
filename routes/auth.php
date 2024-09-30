@@ -6,7 +6,6 @@ use Livewire\Volt\Volt;
 
 Route::middleware('guest')->group(function () {
     Volt::route('register', 'pages.auth.register')
-        ->middleware(\Spatie\Honeypot\ProtectAgainstSpam::class)
         ->name('register');
 
     Volt::route('login', 'pages.auth.login')
