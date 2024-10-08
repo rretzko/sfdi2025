@@ -205,7 +205,16 @@
             <label for="" class="font-semibold">Payments</label>
             @if($form->ePay)
                 @if($amountDue)
-                    @include('components.partials.payPal' )
+
+                    {{-- PAYPAL --}}
+                    @if($form->ePayVendor === 'paypal')
+                        @include('components.partials.payPal' )
+                    @endif
+
+                    {{-- SQUARE --}}
+                    @if($form->ePayVendor === 'square')
+                        @include('components.partials.square' )
+                    @endif
                 @else
                     <div class="ml-4 py-2">
                         Fee Paid: ${{ number_format($feePaid,2) }}

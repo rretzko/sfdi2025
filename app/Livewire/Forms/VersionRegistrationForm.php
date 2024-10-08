@@ -49,6 +49,7 @@ class VersionRegistrationForm extends Form
     public string $emergencyContactString = '';
     public string $emergencyContactBestPhone = 'missing';
     public bool $ePay = true;
+    public string $ePayVendor = 'none';
     public string $ePaymentId = '';
     public float $feeAudition = 0.00;
     public float $feeParticipation = 0.00;
