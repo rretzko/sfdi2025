@@ -5,7 +5,7 @@ overflow: auto;
 display: flex;
 flex-direction: column;
 justify-content: flex-end;
-align-items: center;
+align-items: start;
 width: 100%;
 background: #FFFFFF;
 border: 1px solid rgba(0, 0, 0, 0.1);
@@ -13,7 +13,7 @@ box-shadow: -2px 10px 5px rgba(0, 0, 0, 0);
 border-radius: 10px;
 font-family: SQ Market, SQ Market, Helvetica, Arial, sans-serif;
 ">
-            <div style="padding: 20px; display: flex; flex-direction: column;">
+            <div style="padding: 20px; display: flex; flex-direction: column;" >
                 <label>Please pay ${{ number_format($amountDue, 2) }} via Square.com</label>
                 <a target="_blank" data-url="https://square.link/u/6NAX5esZ?src=embd"
                    href="https://square.link/u/6NAX5esZ?src=embed" style="

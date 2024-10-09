@@ -187,6 +187,7 @@ class VersionRegistrationForm extends Form
         //ePayment
         $this->ePaymentId = $this->getEpaymentId();
         $this->setEpayment();
+        $this->ePayVendor = $this->version->epayment_vendor;
 
         //address string
         $address = Address::where('user_id', $this->student->user_id)->first();

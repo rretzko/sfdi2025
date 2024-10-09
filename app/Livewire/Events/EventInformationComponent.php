@@ -3,6 +3,7 @@
 namespace App\Livewire\Events;
 
 use App\Livewire\Forms\VersionRegistrationForm;
+use App\Models\Address;
 use App\Models\Candidate;
 use App\Models\EmergencyContact;
 use App\Models\Epayment;
@@ -67,6 +68,14 @@ class EventInformationComponent extends Component
     public string $teacherName = '';
     public int $versionId = 0;
     public string $versionShortName = '';
+
+    //SQUARE
+    public string $firstName = '';
+    public string $lastName = '';
+    public string $phone = '';
+    public array $addressLines = [];
+    public string $city = '';
+    public string $geostateAbbr = '';
 
     public function mount()
     {
@@ -410,6 +419,7 @@ class EventInformationComponent extends Component
         $this->sandbox = false;
 
         if(isset($this->form->version)) {
+            //PAYPAL
             $this->amountDue = $this->getAmountDue();
             $this->customProperties = $this->getCustomProperties();
             $this->email = auth()->user()->email;
@@ -418,6 +428,23 @@ class EventInformationComponent extends Component
             $this->teacherName = $this->form->teacherFullName;
             $this->versionShortName = $this->form->version->short_name;
             $this->versionId = $this->form->versionId;
+            //SQUARE
+            $user = auth()->user();
+            $address = Address::where('user_id', $user->id)->first();
+            $student = Student::where('user_id', $user->id)->first();
+            $this->firstName = $user->first_name;
+            $this->lastName = $user->last_name;
+            $this->email = $user->email;
+            $this->phone = ($student->phoneMobile) ?: ($student->phoneHome ?: '');
+            $this->addressLines = ($address)
+                ? [$address->address1, $address->address2]
+                : [];
+            $this->city = ($address)
+                ? $address->city
+                : '';
+            $this->geostateAbbr = ($address)
+                ? $address->geostateAbbr
+                : 'NJ';
         }
     }
 

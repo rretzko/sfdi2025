@@ -203,6 +203,7 @@
         {{-- ePayment --}}
         <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300 border-b-gray-300">
             <label for="" class="font-semibold">Payments</label>
+
             @if($form->ePay)
                 @if($amountDue)
 
@@ -213,7 +214,8 @@
 
                     {{-- SQUARE --}}
                     @if($form->ePayVendor === 'square')
-                        @include('components.partials.square' )
+                        @include('square.squareInApp')
+{{--                        <a href="{{ route('square', ['candidateId' => '831234', 'amountDue' => $amountDue]) }}" >Click for Square Payment</a>--}}
                     @endif
                 @else
                     <div class="ml-4 py-2">

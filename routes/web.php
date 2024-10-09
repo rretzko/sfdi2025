@@ -28,4 +28,8 @@ Route::view('events', 'events')
 Route::get('pdf/application/{candidate}', \App\Http\Controllers\Pdfs\ApplicationPdfController::class)
     ->name('pdf.application');
 
+//Square Payment
+Route::get('square/{candidateId}/{amountDue}', \App\Http\Controllers\Square\SquarePaymentController::class)
+    ->name('square');
+
 require __DIR__.'/auth.php';
