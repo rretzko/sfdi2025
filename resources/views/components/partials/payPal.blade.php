@@ -6,8 +6,8 @@
 >
 
     <div class="flex flex-row space-x-2">
-        <label>Click the PayPal button to pay the Amount Due:</label>
-        <div>${{ number_format($amountDue, 2) }}</div>
+        <label class="w-fit">Click the PayPal button to pay the Amount Due:</label>
+        <div class="">${{ number_format($amountDue, 2) }}</div>
     </div>
 
     <!-- Identify your business so that you can collect the payments. -->
@@ -25,7 +25,7 @@
     <input type="hidden" name="currency_code" value="USD">
     <input type="hidden" name="amount" value="{{ $amountDue }}">
     <!-- display the payment button -->
-    <input class="rounded-full" type="image" name="submit" src="{{ Storage::disk('s3')->url('pp.png') }}"
+    <input class="rounded-full w-fit" type="image" name="submit" src="{{ Storage::disk('s3')->url('pp.png') }}"
            alt="PayPal button">
 
     <div id="advisory" class="text-xs text-red-600">
