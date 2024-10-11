@@ -89,7 +89,7 @@ class EventInformationComponent extends Component
         $this->grade = $gradeService->getGrade($this->student->class_of);
 
         $this->school = $this->student->activeSchool();
-        $this->schoolName = $this->school->name;
+        $this->schoolName = $this->school->name ?? '' ;
         $this->teachersCsv = $this->getTeachersCsv();
         $this->teacherId = $this->getTeacherId();
 
@@ -258,10 +258,12 @@ class EventInformationComponent extends Component
     {
         //ensure that events are available
         $this->setEvents();
-
+;
         //early exit
-        if(! count($this->events)){
-            return 'No events found. Please see your teacher if you expected to find open events.';
+        if(is_null($this->events) || (! count($this->events))) {
+            return ($this->school->id)
+                ? 'No events found. Please see your teacher if you expected to find open events.'
+                : 'Use the "School" tab above to select a school and teacher before continuing.';
         }
 
         //isolate version names into an array
@@ -332,7 +334,7 @@ class EventInformationComponent extends Component
             ->where('student_id', $this->studentId)
             ->latest('id')
             ->first()
-            ->teacher_id;
+            ->teacher_id ?? 0;
     }
 
     private function getVoiceParts(): array

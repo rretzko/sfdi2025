@@ -31,7 +31,7 @@ class Student extends Model
             ->where('school_student.student_id', $this->id)
             ->where('school_student.active', 1)
             ->select('schools.*')
-            ->first();
+            ->first() ?? new School();
     }
     public function address(): HasOne
     {

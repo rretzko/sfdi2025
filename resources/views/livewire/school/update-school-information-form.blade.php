@@ -36,6 +36,9 @@ new class extends Component
     public function updatedSchoolId(): void
     {
         $this->teachers = $this->buildTeachers();
+
+        //set first teacher as default teacher it
+        $this->teacherId = array_key_first($this->teachers);
     }
 
     /**
