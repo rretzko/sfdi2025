@@ -15,7 +15,6 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <!-- SQUARE -->
-        <link href="/css/squarePaymentForm.css" rel="stylesheet" />
 {{--        <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>--}}
 {{--        <script type="text/javascript" src="https://js.squareup.com/v2/paymentform"></script>--}}
 

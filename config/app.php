@@ -126,6 +126,7 @@ return [
     /*
      * Square.com
      */
-    'squareSandboxAccessToken' => env('SQUARE_SANDBOX_ACCESS_TOKEN', '12345ABC'),
+    'squareSandboxApplicationId' => env('SQUARE_SANDBOX_APPLICATION_ID', '12345ABC'),
     'squareSandboxLocation' => env('SQUARE_SANDBOX_LOCATION', '123ABC'),
+    'squareAccessToken' => env('SQUARE_ACCESS_TOKEN'),
 ];

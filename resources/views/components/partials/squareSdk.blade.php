@@ -6,7 +6,7 @@
         async function initializeCard(payments) {
             const card = await payments.card();
             await card.attach('#card-container');
-console.log(card);
+
             return card;
         }
 
