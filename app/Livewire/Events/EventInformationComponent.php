@@ -44,12 +44,15 @@ class EventInformationComponent extends Component
     public string $eventsCsv = 'No events found.';
     public array $geostates = [];
     public int $grade = 4;
+    public string $logo = '';
     public array $programNames = [];
     public bool $requiresHomeAddress = false;
 
     public School $school;
     public string $schoolName = '';
     public array $showForms = [];
+    public string $squareId = '';
+
     public Student $student;
     public int $studentId = 0;
     public string $teachersCsv = '';
@@ -105,6 +108,9 @@ class EventInformationComponent extends Component
 
         //ePayment
         $this->setEpaymentVars();
+
+        //square ID
+        $this->squareId = $this->getSquareId();
     }
 
     public function render()
@@ -291,6 +297,16 @@ class EventInformationComponent extends Component
         $version = Version::find($this->form->versionId) ?? new Version();
 
         return (bool)! $version->student_home_address ?? 0;
+    }
+
+    private function getSquareId(): string
+    {
+        $candidatedId = Candidate::query()
+            ->where('version_id', $this->versionId)
+            ->where('student_id', auth()->id())
+            ->value('id');
+
+        return substr($candidatedId, 2);
     }
 
     private function getTeachersCsv(): string

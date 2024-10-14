@@ -170,7 +170,11 @@ class PdfApplicationDataFactory
 
     private function getLogo(): string
     {
-        return 'logos/nj-mea-logo.jpg';
+        return match($this->version->event->organization){
+            'CJMEA' => 'logos/cjmea-logo.jpg',
+            'NJMEA' =>'logos/nj-mea-logo.jpg',
+            default =>'',
+        };
     }
 
     private function getParticipationFee(): string

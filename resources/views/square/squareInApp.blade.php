@@ -214,8 +214,8 @@
         src="https://sandbox.web.squarecdn.com/v1/square.js"
     ></script>
     <script>
-        const appId = '{{ config('app.squareSandboxApplicationId') }}';
-        const locationId = '{{ config('app.squareSandboxLocation') }}';
+        const appId = "{{ config('app.squareSandboxApplicationId') }}";
+        const locationId = "{{ config('app.squareSandboxLocation') }}";
         const accessToken = '{{ config('app.squareAccessToken') }}';
 console.log('appId: ' + appId);
 console.log('locationId: ' + locationId);

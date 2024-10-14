@@ -49,6 +49,11 @@
             <label class="w-1/4 sm:w-1/6 lg:w-1/12">Events:</label>
             <div class="font-semibold">{{ $eventsCsv }}</div>
         </div>
+
+        <div>{{-- https://auditionsuite-production.s3.amazonaws.com/cjmealogo.png --}}
+            <img src="{{ Storage::disk('s3')->url('logos/cjmea-logo.jpg') }}"
+                 alt="logo" height="60" width="60"/>
+        </div>
     </div>
 
     {{-- TABS --}}
@@ -214,7 +219,12 @@
 
                     {{-- SQUARE --}}
                     @if($form->ePayVendor === 'square')
-                        @include('square.squareInApp')
+{{--                        @include('square.squareInApp')--}}
+                        <div>
+                            Please note: You will be asked for an ID when paying through Square.<br />
+                            Please enter: <span class="font-semibold text-lg font-mono">{{ $squareId }}</span> for your ID.
+                        </div>
+                        @include('square.buyButton')
 {{--                        <a href="{{ route('square', ['candidateId' => '831234', 'amountDue' => $amountDue]) }}" >Click for Square Payment</a>--}}
                     @endif
                 @else
