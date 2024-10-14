@@ -13,7 +13,7 @@
   font-family: SQ Market, SQ Market, Helvetica, Arial, sans-serif;
   ">
         <div style="padding: 20px;">
-            <a target="_blank" data-url="https://square.link/u/VjR6oocr?src=embd" href="https://square.link/u/VjR6oocr?src=embed" style="
+            <a target="_blank" data-url="https://square.link/u/ThgQSAH6?src=embd" href="https://square.link/u/ThgQSAH6?src=embed" style="
     display: inline-block;
     font-size: 18px;
     line-height: 48px;

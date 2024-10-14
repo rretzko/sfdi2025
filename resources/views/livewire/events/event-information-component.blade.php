@@ -50,10 +50,10 @@
             <div class="font-semibold">{{ $eventsCsv }}</div>
         </div>
 
-        <div>{{-- https://auditionsuite-production.s3.amazonaws.com/cjmealogo.png --}}
-            <img src="{{ Storage::disk('s3')->url('logos/cjmea-logo.jpg') }}"
-                 alt="logo" height="60" width="60"/>
-        </div>
+{{--        <div>--}}{{-- https://auditionsuite-production.s3.amazonaws.com/cjmealogo.png --}}
+{{--            <img src="{{ Storage::disk('s3')->url('logos/cjmea-logo.jpg') }}"--}}
+{{--                 alt="logo" height="60" width="60"/>--}}
+{{--        </div>--}}
     </div>
 
     {{-- TABS --}}
@@ -225,7 +225,9 @@
                             Please enter: <span class="font-semibold text-lg font-mono">{{ $squareId }}</span> for your ID.
                         </div>
                         @include('square.buyButton')
-{{--                        <a href="{{ route('square', ['candidateId' => '831234', 'amountDue' => $amountDue]) }}" >Click for Square Payment</a>--}}
+                        <div id="advisory" class="text-xs text-red-600">
+                            Please note: Payment record updates may take as long as 24-hours during the work week and by Monday at noon over the weekend.
+                        </div>
                     @endif
                 @else
                     <div class="ml-4 py-2">
