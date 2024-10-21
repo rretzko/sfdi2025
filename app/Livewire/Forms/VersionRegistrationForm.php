@@ -78,6 +78,7 @@ class VersionRegistrationForm extends Form
     public string $teacherEmail = '';
     public string $teacherFullName = '';
     public string $teacherPhoneBlock = '';
+    public string $uploadType = 'none';
     public bool $uploadTypesCount = false;
     public Version $version;
     #[Validate('required|int|exists:versions,id')]
@@ -124,6 +125,7 @@ class VersionRegistrationForm extends Form
         $this->versionName = $this->version->name;
         $this->eapplication = VersionConfigRegistrant::where('version_id', $this->versionId)->first()->eapplication;
         $vca =VersionConfigAdjudication::where('version_id', $this->versionId)->first();
+        $this->uploadType = $this->version->upload_type;
         $this->uploadTypesCount = $vca->upload_count;
         $this->feeAudition = ConvertToUsdService::penniesToUsd($this->version->fee_registration);
         $this->feeParticipation = ConvertToUsdService::penniesToUsd($this->version->fee_participation);

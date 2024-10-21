@@ -279,7 +279,7 @@
                     We understand that <b>{{ $dto['teacherFullName'] }}</b>, who is sponsoring
                     <b>{{ $dto['fullName'] }}</b>,
                     is required to
-                    participate as a JUDGE AT LIVE AUDITIONS on November 15th, 2024 at Wall Township High School.
+                    participate as a JUDGE AT LIVE AUDITIONS on Tuesday, November 19th, 2024 at Wall Township High School.
                     If the director can not attend, they must provide an adequate substitute to fulfill the commitment.
                     The director also understands that if they have students accepted to
                     the {{ $dto['versionShortName'] }},
