@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('welcome');
@@ -31,5 +32,8 @@ Route::get('pdf/application/{candidate}', \App\Http\Controllers\Pdfs\Application
 //Square Payment
 Route::get('square/{candidateId}/{amountDue}', \App\Http\Controllers\Square\SquarePaymentController::class)
     ->name('square');
+
+//PayPal Payment
+Route::post('/webhook/paypal',[PaymentWebhookController::class,'handlePayPal']);
 
 require __DIR__.'/auth.php';

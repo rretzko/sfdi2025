@@ -65,7 +65,7 @@ class EventInformationComponent extends Component
     public string $email = '';
     public string $epaymentId = '';
     public float $feePaid = 0.00;
-    public bool $sandbox = false;
+public bool $sandbox = false; //false;
     public string $sandboxId = 'sb-qw0iu20847075@business.example.com'; //sandbox account
     public string $sandboxPersonalEmail = 'sb-ndsz820837854@personal.example.com'; //dRkJ4(f)
     public string $teacherName = '';
@@ -434,7 +434,7 @@ class EventInformationComponent extends Component
 
     private function setEpaymentVars(): void
     {
-        $this->sandbox = false;
+$this->sandbox = false;
 
         if(isset($this->form->version)) {
             //PAYPAL
