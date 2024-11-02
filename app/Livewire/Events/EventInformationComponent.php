@@ -78,7 +78,7 @@ public bool $sandbox = false; //false;
     public string $phone = '';
     public array $addressLines = [];
     public string $city = '';
-    public string $geostateAbbr = '';
+    public string $geostateAbbr = 'NJ';
 
     public function mount()
     {

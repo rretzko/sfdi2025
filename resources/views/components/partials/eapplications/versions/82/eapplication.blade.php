@@ -240,10 +240,11 @@
                     Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Thursday, January 4th
+                    Thursday, January 9th
                 </td>
                 <td style="text-align: center;">
-                    4-8:15 pm
+                    4-8:00 pm (middle school)<br />
+                    4-8:15 pm (high school)
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -254,10 +255,11 @@
                     Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Monday, January 8th
+                    Monday, January 13th
                 </td>
                 <td style="text-align: center;">
-                    4-8:15 pm
+                    4-8:00 pm (middle school)<br />
+                    4-8:15 pm (high school)
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -268,10 +270,11 @@
                     SNOW DATE Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Tuesday, January 9th
+                    Tuesday, January 14th
                 </td>
                 <td style="text-align: center;">
-                    4-8:15 pm
+                    4-8:00 pm (middle school)<br />
+                    4-8:15 pm (high school)
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -282,10 +285,11 @@
                     Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Wednesday, January 10th
+                    Wednesday, January 15th
                 </td>
                 <td style="text-align: center;">
-                    4-8:15 pm
+                    4-8:00 pm (middle school)<br />
+                    4-8:15 pm (high school)
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -296,10 +300,10 @@
                     All-Day Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Friday, January 12th
+                    Friday, January 17th
                 </td>
                 <td style="text-align: center;">
-                    9:00 am - 3:00 pm
+                    9:00 am - 3:15 pm
                 </td>
                 <td style="text-align: center;">
                     Mt. Olive Middle School
@@ -307,27 +311,14 @@
             </tr>
             <tr>
                 <td style="text-align: center;">
-                    Rehearsal
-                </td>
-                <td style="text-align: center;">
-                    Saturday, January 13th
-                </td>
-                <td style="text-align: center;">
-                    1-4:00 pm
-                </td>
-                <td style="text-align: center;">
-                    Randolph High School
-                </td>
-            </tr>
-            <tr>
-                <td style="text-align: center;">
                     Concert
                 </td>
                 <td style="text-align: center;">
-                    Saturday, January 13th
+                    Saturday, January 18th
                 </td>
                 <td style="text-align: center;">
-                    4:00 pm
+                    Call: 1:00 pm<br />
+                    Concert: 4:00 pm
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -338,10 +329,11 @@
                     SNOW DATE Concert
                 </td>
                 <td style="text-align: center;">
-                    Sunday, January 14th
+                    Sunday, January 19th
                 </td>
                 <td style="text-align: center;">
-                    1:00 pm call, 4:00 pm concert
+                    Call: 1:00 pm call
+                    Concert: 4:00 pm
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
