@@ -332,7 +332,7 @@
                     Sunday, January 19th
                 </td>
                 <td style="text-align: center;">
-                    Call: 1:00 pm call
+                    Call: 1:00 pm call<br />
                     Concert: 4:00 pm
                 </td>
                 <td style="text-align: center;">
