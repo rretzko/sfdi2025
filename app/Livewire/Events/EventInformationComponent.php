@@ -24,6 +24,8 @@ use App\Services\CoTeachersService;
 use App\Services\FindTeacherOpenEventsService;
 use App\Services\MakeCandidateRecordsService;
 use App\Services\PathToRegistrationService;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -46,6 +48,7 @@ class EventInformationComponent extends Component
     public int $grade = 4;
     public string $logo = '';
     public array $programNames = [];
+    public array $rehearsals = [];
     public bool $requiresHomeAddress = false;
 
     public School $school;
@@ -264,7 +267,10 @@ public bool $sandbox = false; //false;
     {
         //ensure that events are available
         $this->setEvents();
-;
+
+        //ensure that open rehearsals are available participating ensemble members
+        $this->setRehearsals();
+
         //early exit
         if(is_null($this->events) || (! count($this->events))) {
             return ($this->school->id)
@@ -477,6 +483,23 @@ $this->sandbox = false;
         foreach($this->coTeacherIds AS $teacherId){
             $this->events = array_merge($this->events, $service->getTeacherEvents($teacherId));
         }
+    }
+
+    private function setRehearsals(): void
+    {
+        $now = Carbon::now()->format('Y-m-d H:i:s');
+
+        $versionIds = DB::table('versions')
+            ->join('version_config_dates AS open', 'open.version_id', '=', 'versions.id')
+            ->join('version_config_dates AS close', 'close.version_id', '=', 'versions.id')
+            ->where('open.date_type', 'rehearsal_open')
+            ->where('open.version_date', '<=', $now)
+            ->where('close.date_type', 'rehearsal_close')
+            ->where('close.version_date', '>=', $now)
+            ->pluck('versions.id')
+            ->toArray();
+
+        dd($versionIds);
     }
 
     /**
