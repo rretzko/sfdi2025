@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Models\Candidate;
+use App\Models\Student;
 use App\Models\Version;
 use App\Models\School;
+use Illuminate\Support\Facades\Log;
 
 class FindPdfPathService
 {
@@ -121,5 +123,40 @@ class FindPdfPathService
 
         // Optionally handle the case where the version is not found
         throw new \Exception("Version with ID {$versionId} not found.");
+    }
+
+    public function findParticipationContractPath(Version $version, Student $student): string
+    {
+        $root = resource_path(DIRECTORY_SEPARATOR
+            . 'views'
+            . DIRECTORY_SEPARATOR
+            . 'pdfs'
+            . DIRECTORY_SEPARATOR
+            . 'participationContracts');
+Log::info('*** root: ' . $root . ' ***');
+        $fileName = 'pdf.blade.php';
+
+        $default = $root . DIRECTORY_SEPARATOR . $fileName;
+        $versionId = $version->id;
+Log::info('*** default: ' . $default . ' ***');
+        $file = $root
+            . DIRECTORY_SEPARATOR
+            . 'versions'
+            . DIRECTORY_SEPARATOR
+            . $versionId
+            . DIRECTORY_SEPARATOR
+            . $fileName;
+Log::info('*** versions file: ' . $file . ' ***');
+        if(! file_exists($file)){
+            $eventId = $version->event_id;
+            $file = "$root/events/$eventId/$fileName";
+        }
+Log::info('*** events file: ' . $file . ' ***');
+        if(! file_exists($file)){
+
+            $file = $default;
+        }
+Log::info('*** final file: ' . $file . ' ***');
+        return $file;
     }
 }

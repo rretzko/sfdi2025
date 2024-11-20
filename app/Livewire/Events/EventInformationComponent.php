@@ -21,6 +21,7 @@ use App\Models\VoicePart;
 use App\Services\CalcGradeFromClassOfService;
 use App\Services\ConvertToUsdService;
 use App\Services\CoTeachersService;
+use App\Services\FindStudentOpenRehearsalsService;
 use App\Services\FindTeacherOpenEventsService;
 use App\Services\MakeCandidateRecordsService;
 use App\Services\PathToRegistrationService;
@@ -47,6 +48,7 @@ class EventInformationComponent extends Component
     public array $geostates = [];
     public int $grade = 4;
     public string $logo = '';
+    public array $participationContracts = [];
     public array $programNames = [];
     public array $rehearsals = [];
     public bool $requiresHomeAddress = false;
@@ -61,6 +63,9 @@ class EventInformationComponent extends Component
     public string $teachersCsv = '';
     public int $teacherId = 0;
     public array $voiceParts = [];
+
+    //participationFees
+    public float $participationFee = 0.00;
 
     //epayment
     public float $amountDue = 0.00;
@@ -114,6 +119,14 @@ public bool $sandbox = false; //false;
 
         //square ID
         $this->squareId = $this->getSquareId();
+
+        //rehearsals
+        $this->rehearsals = $this->setRehearsals();
+
+        //participation contracts
+        $this->participationContracts = $this->setParticipationContracts();
+        //dd(array_key_exists(81, $this->participationContracts));
+
     }
 
     public function render()
@@ -122,6 +135,11 @@ public bool $sandbox = false; //false;
         [
             'applicationErrors' => $this->setApplicationErrors(),
         ]);
+    }
+
+    public function clickDownloadContract(int $versionId)
+    {
+        return $this->redirect("pdf/participationContracts/$versionId/$this->studentId" );
     }
 
     public function downloadApp()
@@ -207,7 +225,15 @@ public bool $sandbox = false; //false;
         return ConvertToUsdService::penniesToUsd($amountDueInPennies);
     }
 
-    private function getCustomProperties(): string
+    private function getCandidateid(int $versionId): int
+    {
+        return Candidate::query()
+            ->where('version_id', $versionId)
+            ->where('student_id', $this->studentId)
+            ->value('id');
+    }
+
+    private function getCustomProperties(string $feeType='registration'): string
     {
         $separator = ' | ';
 
@@ -221,10 +247,32 @@ public bool $sandbox = false; //false;
                 (string) $this->form->candidate->school_id,
                 (string) $this->amountDue,
                 (string) $this->form->candidateId,
-                'registration', //fee type
+                (string) $feeType,
                 auth()->user()->name, //additional identification info
             ];
         }
+
+        return implode($separator, $properties);
+    }
+
+    private function getCustomRehearsalProperties(int $versionId, int $amountDue): string
+    {
+        $separator = ' | ';
+
+        $candidateId = $this->getCandidateid($versionId);
+        $candidate = Candidate::find($candidateId);
+        $feeType = 'participation';
+
+        $properties = [
+            (string) $candidate->student->user_id,
+            (string) $versionId,
+            (string) $candidate->school_id,
+            (string) ConvertToUsdService::penniesToUsd($amountDue),
+            (string) $candidateId,
+            (string) $feeType,
+            auth()->user()->name, //additional identification info
+        ];
+
 
         return implode($separator, $properties);
     }
@@ -268,9 +316,6 @@ public bool $sandbox = false; //false;
         //ensure that events are available
         $this->setEvents();
 
-        //ensure that open rehearsals are available participating ensemble members
-        $this->setRehearsals();
-
         //early exit
         if(is_null($this->events) || (! count($this->events))) {
             return ($this->school->id)
@@ -296,6 +341,33 @@ public bool $sandbox = false; //false;
             ->where('candidate_id', $this->form->candidateId)
             ->where('version_id' , $this->form->versionId)
             ->sum('amount');
+    }
+
+    private function getParticipationFeePaid(int $versionId): float
+    {
+        $candidateId = $this->getCandidateId($versionId);
+
+        return DB::table('epayments')
+            ->where('version_id', $versionId)
+            ->where('candidate_id', $candidateId)
+            ->where('fee_type', 'participation')
+            ->sum('amount');
+    }
+
+    private function getRehearsalEnsembleName(int $versionId): string
+    {
+        $eventId = Version::find($versionId)->event_id;
+
+        return DB::table('audition_results')
+            ->join('candidates', 'candidates.id', '=', 'audition_results.candidate_id')
+            ->join('versions', 'audition_results.version_id', '=', 'versions.id')
+            ->join('events', 'events.id', '=', 'versions.event_id')
+            ->join('event_ensembles', 'event_ensembles.abbr', '=', 'audition_results.acceptance_abbr')
+            ->where('audition_results.version_id', $versionId)
+            ->where('audition_results.accepted', 1)
+            ->where('candidates.student_id', $this->studentId)
+            ->where('event_ensembles.event_id', $eventId)
+            ->value('event_ensembles.ensemble_name');
     }
 
     private function getRequiresHomeAddress(): bool
@@ -485,21 +557,58 @@ $this->sandbox = false;
         }
     }
 
-    private function setRehearsals(): void
+    private function setParticipationContracts(): array
     {
-        $now = Carbon::now()->format('Y-m-d H:i:s');
+        $contracts = [];
 
-        $versionIds = DB::table('versions')
-            ->join('version_config_dates AS open', 'open.version_id', '=', 'versions.id')
-            ->join('version_config_dates AS close', 'close.version_id', '=', 'versions.id')
-            ->where('open.date_type', 'rehearsal_open')
-            ->where('open.version_date', '<=', $now)
-            ->where('close.date_type', 'rehearsal_close')
-            ->where('close.version_date', '>=', $now)
-            ->pluck('versions.id')
-            ->toArray();
+        $service = new FindStudentOpenRehearsalsService($this->studentId);
 
-        dd($versionIds);
+        foreach($service->getRehearsals() AS $versionId){
+
+            $version = Version::find($versionId);
+            $participationContract = 1; //$version->participation_contract;
+
+            $contracts[$versionId] = [
+                'participationContract' => $participationContract,
+            ];
+
+        }
+
+        return $contracts;
+    }
+
+    /**
+     * @return array
+     */
+    private function setRehearsals(): array
+    {
+        $rehearsals = [];
+
+        $service = new FindStudentOpenRehearsalsService($this->studentId);
+
+        foreach($service->getRehearsals() AS $versionId){
+
+            $version = Version::find($versionId);
+            $participationFee = $version->fee_participation;
+            $participationFeePaid = $this->getParticipationFeePaid($versionId);
+            $participationAmountDue = ($participationFee - $participationFeePaid);
+            $shortName = $version->short_name;
+            $ePayVendor = $version->epayment_vendor;
+
+            $rehearsals[$versionId] = [
+                'versionId' => $versionId,
+                'versionShortName' => $shortName,
+                'ensembleName' => $this->getRehearsalEnsembleName($versionId),
+                'participationFee' => ConvertToUsdService::penniesToUsd($participationFee),
+                'participationFeePaid' => ConvertToUsdService::penniesToUsd($this->getParticipationFeePaid($versionId)),
+                'participationAmountDue' => ConvertToUsdService::penniesToUsd($participationAmountDue),
+                'ePayVendor' => $ePayVendor,
+            ];
+
+            $this->customProperties = $this->getCustomRehearsalProperties($versionId, $participationAmountDue);
+        }
+
+        return $rehearsals;
     }
 
     /**

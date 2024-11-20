@@ -14,12 +14,6 @@
     <div class="mt-4">
         <h3 class="font-semibold underline">Qualifications</h3>
 
-        {{-- CANDIDATE ID (USED FOR TESTING --}}
-{{--        <div class="flex flex-row">--}}
-{{--            <label class="w-1/4 sm:w-1/6 lg:w-1/12">Candidate Id:</label>--}}
-{{--            <div class="font-semibold">{{ $form->candidateId }}</div>--}}
-{{--        </div>--}}
-
         {{-- SCHOOL NAME --}}
         <div class="flex flex-row">
             <label class="w-1/4 sm:w-1/6 lg:w-1/12">School:</label>
@@ -50,10 +44,6 @@
             <div class="font-semibold">{{ $eventsCsv }}</div>
         </div>
 
-{{--        <div>--}}{{-- https://auditionsuite-production.s3.amazonaws.com/cjmealogo.png --}}
-{{--            <img src="{{ Storage::disk('s3')->url('logos/cjmea-logo.jpg') }}"--}}
-{{--                 alt="logo" height="60" width="60"/>--}}
-{{--        </div>--}}
     </div>
 
     {{-- TABS --}}
@@ -242,6 +232,72 @@
         </fieldset>
 
     </div>
+    @endif
+
+    {{-- REHEARSALS --}}
+    @if(count($rehearsals))
+        <div>
+            <div class="font-semibold underline">
+                Rehearsals
+            </div>
+            <div>
+                You have been accepted into the following ensemble rehearsals:
+                @foreach($rehearsals AS $rehearsal)
+                    <div class="border border-white border-t-gray-300 pt-2">
+                        <div class="font-bold">
+                            {{ $rehearsal['versionShortName'] }}: {{ $rehearsal['ensembleName'] }}
+                        </div>
+
+                        {{-- PARTICIPATION CONTRACT --}}
+                        @if(array_key_exists($rehearsal['versionId'], $participationContracts))
+                            <div class="text-blue-500 my-4">
+                                <button
+                                    type="button"
+                                    wire:click="clickDownloadContract({{ $rehearsal['versionId'] }})"
+                                >
+                                    Click here to download your Participation Contract.
+                                </button>
+                            </div>
+                        @endif
+
+                        {{-- PARTICIPATION EPAYMENT --}}
+                        <div>
+
+                            @if($form->ePay)
+                                @if($rehearsal['participationAmountDue'])
+
+                                    {{-- PAYPAL --}}
+                                    @if($rehearsal['ePayVendor'] === 'paypal')
+                                        @include('components.partials.payPal' )
+                                    @endif
+
+                                    {{-- SQUARE --}}
+                                    @if($rehearsal['ePayVendor'] === 'square')
+
+                                        <div>
+                                            Please note: You will be asked for an ID when paying through Square.<br />
+                                            Please enter: <span class="font-semibold text-lg font-mono">{{ $squareId }}</span> for your ID.
+                                        </div>
+                                        @include('square.buyButton')
+                                        <div id="advisory" class="text-xs text-red-600">
+                                            Please note: Payment record updates may take as long as 24-hours during the work week and by Monday at noon over the weekend.
+                                        </div>
+                                    @endif
+                                @else
+                                    <div class="ml-4 py-2">
+                                        Fee Paid: ${{ number_format($rehearsal['participationFeePaid'],2) }}
+                                    </div>
+                                @endif
+                            @else
+                                <div class="ml-4 py-2">
+                                    Please see your teacher ({{ $teacherName }}) for all payments.
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
     @endif
 
 </section>

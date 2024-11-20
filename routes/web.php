@@ -28,6 +28,8 @@ Route::view('events', 'events')
 //PDFs
 Route::get('pdf/application/{candidate}', \App\Http\Controllers\Pdfs\ApplicationPdfController::class)
     ->name('pdf.application');
+Route::get('pdf/participationContracts/{version}/{student}', \App\Http\Controllers\Pdfs\ParticipationContractController::class)
+    ->name('pdf.participationContracts');
 
 //Square Payment
 Route::get('square/{candidateId}/{amountDue}', \App\Http\Controllers\Square\SquarePaymentController::class)
