@@ -34,15 +34,17 @@ new class extends Component
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" wire:navigate>
                         {{ __('Bio') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('school')" :active="request()->routeIs('school')" wire:navigate>
-                        {{ __('School') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('emergencyContacts')" :active="request()->routeIs('emergencyContacts')" wire:navigate>
-                        {{ __('Emergency Contacts') }}
-                    </x-nav-link>
-                    <x-nav-link :href="route('events')" :active="request()->routeIs('events')" wire:navigate>
-                        {{ __('Events') }}
-                    </x-nav-link>
+                    @if(auth()->user()->first_name && auth()->user()->last_name)
+                        <x-nav-link :href="route('school')" :active="request()->routeIs('school')" wire:navigate>
+                            {{ __('School') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('emergencyContacts')" :active="request()->routeIs('emergencyContacts')" wire:navigate>
+                            {{ __('Emergency Contacts') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('events')" :active="request()->routeIs('events')" wire:navigate>
+                            {{ __('Events') }}
+                        </x-nav-link>
+                    @endif
 
                 </div>
             </div>
@@ -132,25 +134,27 @@ new class extends Component
             </svg>
 
         </x-nav-link>
-        <x-nav-link :href="route('school')" :active="request()->routeIs('school')" wire:navigate title="school">
-            {{-- heroicons:building --}}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-green-600">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
-            </svg>
+        @if(auth()->user()->first_name && auth()->user()->last_name)
+            <x-nav-link :href="route('school')" :active="request()->routeIs('school')" wire:navigate title="school">
+                {{-- heroicons:building --}}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-green-600">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+                </svg>
 
-        </x-nav-link>
-        <x-nav-link :href="route('emergencyContacts')" :active="request()->routeIs('emergencyContacts')" wire:navigate title="emergency contracts">
-            {{-- heroicons:user-group --}}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-yellow-800">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
-            </svg>
-        </x-nav-link>
-        <x-nav-link :href="route('events')" :active="request()->routeIs('events')" wire:navigate title="events">
-            {{-- heroicons:calendar --}}
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-red-800">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
-            </svg>
+            </x-nav-link>
+            <x-nav-link :href="route('emergencyContacts')" :active="request()->routeIs('emergencyContacts')" wire:navigate title="emergency contracts">
+                {{-- heroicons:user-group --}}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-yellow-800">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+                </svg>
+            </x-nav-link>
+            <x-nav-link :href="route('events')" :active="request()->routeIs('events')" wire:navigate title="events">
+                {{-- heroicons:calendar --}}
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-red-800">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+                </svg>
 
-        </x-nav-link>
+            </x-nav-link>
+        @endif
     </div>
 </nav>

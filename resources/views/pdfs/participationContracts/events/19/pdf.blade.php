@@ -313,7 +313,7 @@
                 We, the undersigned, have read this official {{ $dto['versionName'] }} Student Contract, agree to its
                 contents and agree to support its enforcement.
                 We permit the student to attend all rehearsals in their entirety during the event.
-                If a violation of the General Expectations and Student Cod of Conduct occurs, we understand that the
+                If a violation of the General Expectations and Student Code of Conduct occurs, we understand that the
                 student, director, and parent will be notified, and that the student may be dismissed from the program
                 and removed from the final performance recording.
             </p>

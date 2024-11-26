@@ -133,12 +133,12 @@ class FindPdfPathService
             . 'pdfs'
             . DIRECTORY_SEPARATOR
             . 'participationContracts');
-Log::info('*** root: ' . $root . ' ***');
+
         $fileName = 'pdf.blade.php';
 
         $default = $root . DIRECTORY_SEPARATOR . $fileName;
         $versionId = $version->id;
-Log::info('*** default: ' . $default . ' ***');
+
         $file = $root
             . DIRECTORY_SEPARATOR
             . 'versions'
@@ -146,17 +146,17 @@ Log::info('*** default: ' . $default . ' ***');
             . $versionId
             . DIRECTORY_SEPARATOR
             . $fileName;
-Log::info('*** versions file: ' . $file . ' ***');
+
         if(! file_exists($file)){
             $eventId = $version->event_id;
             $file = "$root/events/$eventId/$fileName";
         }
-Log::info('*** events file: ' . $file . ' ***');
+
         if(! file_exists($file)){
 
             $file = $default;
         }
-Log::info('*** final file: ' . $file . ' ***');
+//Log::info('*** final file: ' . $file . ' ***');
         return $file;
     }
 }

@@ -8,6 +8,9 @@ use Livewire\Volt\Component;
 
 new class extends Component
 {
+    public string $firstName = '';
+    public string|null $middleName = '';
+    public string|null $lastName = '';
     public string $name = '';
     public string $email = '';
     public int $pronoun_id = 1; //default
@@ -19,6 +22,9 @@ new class extends Component
     public function mount(): void
     {
         $this->name = Auth::user()->name;
+        $this->firstName = Auth::user()->first_name;
+        $this->middleName = Auth::user()->middle_name;
+        $this->lastName = Auth::user()->last_name;
         $this->email = Auth::user()->email;
         $this->pronoun_id = Auth::user()->pronoun_id;
         $this->pronouns = \App\Models\Pronoun::pluck('descr','id')->toArray();
@@ -32,7 +38,9 @@ new class extends Component
         $user = Auth::user();
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
+            'firstName' => ['required', 'string', 'max:255'],
+            'middleName' => ['nullable', 'string', 'max:255'],
+            'lastName' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
             'pronoun_id' => ['required','int','exists:pronouns,id'],
         ]);
@@ -42,6 +50,16 @@ new class extends Component
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
+
+        $user->first_name = $this->firstName;
+        $user->middle_name = $this->middleName;
+        $user->last_name = $this->lastName;
+
+        $user->name = trim($this->firstName) . ' ';
+        if(strlen($this->middleName)){
+            $user->name .= trim($this->middleName) . ' ';
+        }
+        $user->name .= trim($this->lastName);
 
         $user->save();
 
@@ -79,10 +97,33 @@ new class extends Component
     </header>
 
     <form wire:submit="updateProfileInformation" class="mt-6 space-y-6">
+
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input wire:model="name" id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="name" />
-            <x-input-error class="mt-2" :messages="$errors->get('name')" />
+            <x-input-label for="firstName" :value="__('Name')"/>
+            <div class="flex flex-row space-x-2 items-center">
+                <x-input-label style="min-width: 3rem;" for="firstName" :value="__('First')"/>
+                <x-text-input wire:model="firstName" id="firstName" name="firstName" type="text"
+                              class="mt-1 block w-full" required autocomplete="firstName"/>
+                <x-input-error class="mt-2" :messages="$errors->get('firstName')"/>
+            </div>
+            <div class="flex flex-row space-x-2 items-center">
+                <x-input-label style="min-width: 3rem;" for="middleName" :value="__('Middle')"/>
+                <x-text-input wire:model="middleName" id="middleName" name="middleName" type="text"
+                              class="mt-1 block w-full" autocomplete="middleName"/>
+                <x-input-error class="mt-2" :messages="$errors->get('middleName')"/>
+            </div>
+            <div class="flex flex-row space-x-2 items-center">
+                <x-input-label style="min-width: 3rem;" for="lastName" :value="__('Last')"/>
+                <x-text-input wire:model="lastName" id="lastName" name="lastName" type="text"
+                              class="mt-1 block w-full" required autocomplete="lastName"/>
+                <x-input-error class="mt-2" :messages="$errors->get('lastName')"/>
+            </div>
+            @if(! ($firstName && $lastName) )
+                @php
+                    $mssgs =[ "The name field must include both first and last names.","Please update the name field to continue..."];
+                @endphp
+                <x-input-error class="mt-2" :messages="$mssgs" />
+            @endif
         </div>
 
         <div>

@@ -566,7 +566,7 @@ $this->sandbox = false;
         foreach($service->getRehearsals() AS $versionId){
 
             $version = Version::find($versionId);
-            $participationContract = 1; //$version->participation_contract;
+            $participationContract = $version->participation_contract;
 
             $contracts[$versionId] = [
                 'participationContract' => $participationContract,
