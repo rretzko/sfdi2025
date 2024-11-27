@@ -17,13 +17,28 @@
         {{-- SCHOOL NAME --}}
         <div class="flex flex-row">
             <label class="w-1/4 sm:w-1/6 lg:w-1/12">School:</label>
-            <div class="font-semibold">{{ $schoolName }}</div>
+            <div class="font-semibold">
+                @if($schoolName)
+                    {{ $schoolName }}
+                @else
+                    {{ $schoolAndTeacherMissingMessage }}
+                @endif
+            </div>
         </div>
 
         {{-- TEACHERS --}}
         <div class="flex flex-row">
-            <label class="w-1/4 sm:w-1/6 lg:w-1/12">Teacher(s):</label>
-            <div class="font-semibold">{{ $teachersCsv }}</div>
+            <label class="w-1/4 sm:w-1/6 lg:w-1/12">Teacher@if(strlen($teachersCsv))(s)@endif:</label>
+            <div class="font-semibold">
+                @if($latestTeacher)
+                    {{ $latestTeacher->user->name }}
+                    @if(strlen($teachersCsv))
+                        <span class="text-gray-400">({{ $teachersCsv }})</span>
+                    @endif
+                @else
+                    {{ $schoolAndTeacherMissingMessage }}
+                @endif
+            </div>
         </div>
 
         {{-- GRADE --}}

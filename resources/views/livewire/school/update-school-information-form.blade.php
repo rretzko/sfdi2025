@@ -10,6 +10,7 @@ use Livewire\Volt\Component;
 new class extends Component
 {
     public string $schoolId = '';
+    public bool $schoolInformationUpdated = false;
     public array $schools = [];
     public Student $student;
     public int $studentId = 0;
@@ -46,6 +47,8 @@ new class extends Component
      */
     public function updateSchoolInformation(): void
     {
+        $this->reset('schoolInformationUpdated');
+
         $validated = $this->validate([
             'schoolId' => ['required', 'int', 'exists:schools,id'],
             'teacherId' => ['required','int', 'exists:teachers,id'],
@@ -62,6 +65,8 @@ new class extends Component
 
         //send courtesy  email to teacher
         $this->sendNewStudentEmail();
+
+        $this->schoolInformationUpdated = true;
 
         $this->dispatch('school-information-updated', name: $this->student->user->name);
     }
@@ -101,12 +106,18 @@ new class extends Component
 
     private function sendNewStudentEmail(): void
     {
-        if($this->teacherId){
-
-            $teacher = \App\Models\Teacher::find($this->teacherId);
-
-            Illuminate\Support\Facades\Mail::to($teacher->user)->send( new \App\Mail\StudentAddedToRosterMail($teacher));
+        //default: send email to founder
+        if(\Illuminate\Support\Facades\App::isLocal() || (! $this->teacherId)){
+            $teacher = \App\Models\Teacher::find(config('app.founder'));
         }
+
+        if(\Illuminate\Support\Facades\App::isProduction() && $this->teacherId){
+                $teacher = \App\Models\Teacher::find($this->teacherId);
+                \Illuminate\Support\Facades\Log::info('*** Sending new student email to: ' . $teacher->user->name . '. ***');
+        }
+
+        Illuminate\Support\Facades\Mail::to($teacher->user)->send( new \App\Mail\StudentAddedToRosterMail($teacher));
+
     }
 
     private function getTeacherId(): int
@@ -144,10 +155,19 @@ new class extends Component
 
     private function setStudentTeacher(): void
     {
-        if(! \Illuminate\Support\Facades\DB::table('student_teacher')
-        ->where('student_id', $this->studentId)
-        ->where('teacher_id', $this->teacherId)
-        ->exists()){
+        if(\Illuminate\Support\Facades\DB::table('student_teacher')
+            ->where('student_id', $this->studentId)
+            ->where('teacher_id', $this->teacherId)
+            ->exists()){
+
+            //update the updated_at field to make $this->teacherId the latest teacher
+            $studentTeacher = \App\Models\StudentTeacher::query()
+                ->where('student_id', $this->studentId)
+                ->where('teacher_id', $this->teacherId)
+                ->first();
+            $studentTeacher->touch();
+
+        }else{
 
             \Illuminate\Support\Facades\DB::table('student_teacher')
                 ->insert([

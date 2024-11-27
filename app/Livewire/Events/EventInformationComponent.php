@@ -47,6 +47,7 @@ class EventInformationComponent extends Component
     public string $eventsCsv = 'No events found.';
     public array $geostates = [];
     public int $grade = 4;
+    public Teacher $latestTeacher;
     public string $logo = '';
     public array $participationContracts = [];
     public array $programNames = [];
@@ -54,6 +55,7 @@ class EventInformationComponent extends Component
     public bool $requiresHomeAddress = false;
 
     public School $school;
+    public string $schoolAndTeacherMissingMessage = 'Use the "School" tab above to select a school and teacher before continuing.';
     public string $schoolName = '';
     public array $showForms = [];
     public string $squareId = '';
@@ -101,8 +103,12 @@ public bool $sandbox = false; //false;
 
         $this->school = $this->student->activeSchool();
         $this->schoolName = $this->school->name ?? '' ;
-        $this->teachersCsv = $this->getTeachersCsv();
+
         $this->teacherId = $this->getTeacherId();
+        if($this->teacherId) {
+            $this->latestTeacher = Teacher::find($this->teacherId);
+        }
+        $this->teachersCsv = $this->getTeachersCsv();
 
         /**
          * @todo refactor $this->events to $this->versions
@@ -125,8 +131,6 @@ public bool $sandbox = false; //false;
 
         //participation contracts
         $this->participationContracts = $this->setParticipationContracts();
-        //dd(array_key_exists(81, $this->participationContracts));
-
     }
 
     public function render()
@@ -320,7 +324,7 @@ public bool $sandbox = false; //false;
         if(is_null($this->events) || (! count($this->events))) {
             return ($this->school->id)
                 ? 'No events found. Please see your teacher if you expected to find open events.'
-                : 'Use the "School" tab above to select a school and teacher before continuing.';
+                : $this->schoolAndTeacherMissingMessage;
         }
 
         //isolate version names into an array
@@ -389,33 +393,25 @@ public bool $sandbox = false; //false;
 
     private function getTeachersCsv(): string
     {
-        $a = [];
+        if(! isset($this->latestTeacher)){
+            return '';
+        }
 
-        //isolate the teacher ids based on the user's school
-        $schoolTeacherIds = $this->school->teachers->pluck('id')->toArray();
+        $this->coTeacherIds = CoTeachersService::getStudentCoTeachersIds($this->latestTeacher, $this->school);
 
-        //filter the initial list to teacher's for the user student
-        $studentTeacherIds = StudentTeacher::query()
-            ->where('student_teacher.student_id', $this->studentId)
-            ->whereIn('student_teacher.teacher_id', $schoolTeacherIds)
-            ->pluck('student_teacher.teacher_id')
-            ->toArray();
+        if(count($this->coTeacherIds) === 1){
+            return '';
+        }
 
-        //identify the teacher's co-teachers
-        $studentCoTeacherIds = CoTeachersService::getStudentCoTeachersIds($studentTeacherIds);
-
-        //isolate the teacher objects based on the $studentCoTeacherIds
-        $teachers = Teacher::find($studentCoTeacherIds);
+        $teacherNames = [];
+        $teachers = Teacher::find($this->coTeacherIds);
 
         //isolate the teacher names from the $teachers collection
         foreach($teachers AS $teacher){
-
-            $this->coTeacherIds[] = $teacher->id;
-
-            $a[] = $teacher->user->name;
+            $teacherNames[] = $teacher->user->name;
         }
 
-        return implode(', ', $a);
+        return implode(', ', $teacherNames);
     }
 
     /**
@@ -426,7 +422,7 @@ public bool $sandbox = false; //false;
     {
         return StudentTeacher::query()
             ->where('student_id', $this->studentId)
-            ->latest('id')
+            ->latest('updated_at')
             ->first()
             ->teacher_id ?? 0;
     }

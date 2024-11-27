@@ -30,7 +30,7 @@ new class extends Component
 
          $this->birthday = $this->student->birthday ?? date('Y-m-d');
         $this->classOf = $this->student->class_of;
-        $this->height = $this->student->height;
+        $this->height = $this->student->height;;
         $this->shirtSize = $this->student->shirt_size;
         $this->voicePartId = $this->student->voice_part_id;
 
@@ -49,7 +49,7 @@ new class extends Component
         $validated = $this->validate([
             'birthday' => ['nullable', 'string', 'min:10', 'max:10'],
             'classOf' => ['required', 'string', 'min:4', 'max:4'],
-            'height' => ['nullable','int', 'min:36', 'max:94'],
+            'height' => ['nullable','int', 'min:30', 'max:94'],
             'shirtSize' => ['nullable', 'string'],
             'voicePartId' => ['required', 'int', 'exists:voice_parts,id'],
         ]);

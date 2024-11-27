@@ -13,6 +13,8 @@ new class extends Component
     public string|null $lastName = '';
     public string $name = '';
     public string $email = '';
+    public bool $missingFullName = true;
+    public array $missingFullNameErrorMessage =  [ "The name field must include both first and last names.","Please update the name field to continue..."];
     public int $pronoun_id = 1; //default
     public array $pronouns = [];
 
@@ -22,12 +24,13 @@ new class extends Component
     public function mount(): void
     {
         $this->name = Auth::user()->name;
-        $this->firstName = Auth::user()->first_name;
-        $this->middleName = Auth::user()->middle_name;
-        $this->lastName = Auth::user()->last_name;
+        $this->firstName = Auth::user()->first_name ?? '';
+        $this->middleName = Auth::user()->middle_name ?? '';
+        $this->lastName = Auth::user()->last_name ?? '';
         $this->email = Auth::user()->email;
         $this->pronoun_id = Auth::user()->pronoun_id;
         $this->pronouns = \App\Models\Pronoun::pluck('descr','id')->toArray();
+        $this->missingFullName = $this->getMissingFullNameBool();
     }
 
     /**
@@ -63,6 +66,10 @@ new class extends Component
 
         $user->save();
 
+        $this->missingFullName = $this->getMissingFullNameBool();
+
+        $this->js('window.location.reload()');
+
         $this->dispatch('profile-updated', name: $user->name);
     }
 
@@ -82,6 +89,11 @@ new class extends Component
         $user->sendEmailVerificationNotification();
 
         Session::flash('status', 'verification-link-sent');
+    }
+
+    private function getMissingFullNameBool(): bool
+    {
+        return (! ($this->firstName && $this->lastName));
     }
 }; ?>
 
@@ -118,11 +130,8 @@ new class extends Component
                               class="mt-1 block w-full" required autocomplete="lastName"/>
                 <x-input-error class="mt-2" :messages="$errors->get('lastName')"/>
             </div>
-            @if(! ($firstName && $lastName) )
-                @php
-                    $mssgs =[ "The name field must include both first and last names.","Please update the name field to continue..."];
-                @endphp
-                <x-input-error class="mt-2" :messages="$mssgs" />
+            @if($missingFullName)
+                <x-input-error class="mt-2" :messages="$missingFullNameErrorMessage" />
             @endif
         </div>
 

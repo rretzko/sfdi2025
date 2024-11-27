@@ -2,6 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\School;
+use App\Models\Teacher;
+use Illuminate\Support\Facades\DB;
+
 class CoTeachersService
 {
     /**
@@ -14,18 +18,26 @@ class CoTeachersService
     }
 
     /**
+     * @param  Teacher  $latestTeacher
      * @return array
      * @todo process for identifying co-teachers remains to be sussed out.
      */
-    public static function getStudentCoTeachersIds(array $teacherIds): array
+    public static function getStudentCoTeachersIds(Teacher $latestTeacher, School $school): array
     {
-        $a = [];
+        $schoolId = $school->id;
+        $latestTeacherId = $latestTeacher->id;
 
-        foreach($teacherIds AS $teacherId){
+        $coTeacherIds = DB::table('coteachers')
+            ->where('school_id', $schoolId)
+            ->where(function ($query) use ($latestTeacherId) {
+                $query->where('teacher_id', $latestTeacherId)
+                    ->orWhere('coteacher_id', $latestTeacherId);
+            })
+            ->pluck('teacher_id', 'coteacher_id')
+            ->flatten()
+            ->unique()
+            ->toArray();
 
-            $a[] = $teacherId;
-        }
-
-        return $a;
+        return array_merge($coTeacherIds, [$latestTeacherId]);
     }
 }

@@ -134,6 +134,7 @@ new class extends Component
             </svg>
 
         </x-nav-link>
+
         @if(auth()->user()->first_name && auth()->user()->last_name)
             <x-nav-link :href="route('school')" :active="request()->routeIs('school')" wire:navigate title="school">
                 {{-- heroicons:building --}}
