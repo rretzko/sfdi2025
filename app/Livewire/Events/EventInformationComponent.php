@@ -229,7 +229,7 @@ public bool $sandbox = false; //false;
         return ConvertToUsdService::penniesToUsd($amountDueInPennies);
     }
 
-    private function getCandidateid(int $versionId): int
+    private function getCandidateid(int $versionId): int|null
     {
         return Candidate::query()
             ->where('version_id', $versionId)
@@ -263,7 +263,7 @@ public bool $sandbox = false; //false;
     {
         $separator = ' | ';
 
-        $candidateId = $this->getCandidateid($versionId);
+        $candidateId = $this->getCandidateId($versionId);
         $candidate = Candidate::find($candidateId);
         $feeType = 'participation';
 
@@ -582,26 +582,32 @@ $this->sandbox = false;
 
         $service = new FindStudentOpenRehearsalsService($this->studentId);
 
-        foreach($service->getRehearsals() AS $versionId){
+        foreach($service->getRehearsals() AS $versionId) {
 
-            $version = Version::find($versionId);
-            $participationFee = $version->fee_participation;
-            $participationFeePaid = $this->getParticipationFeePaid($versionId);
-            $participationAmountDue = ($participationFee - $participationFeePaid);
-            $shortName = $version->short_name;
-            $ePayVendor = $version->epayment_vendor;
+            //test for student acceptance into $versionId
+            $candidateId = $this->getCandidateId($versionId);
 
-            $rehearsals[$versionId] = [
-                'versionId' => $versionId,
-                'versionShortName' => $shortName,
-                'ensembleName' => $this->getRehearsalEnsembleName($versionId),
-                'participationFee' => ConvertToUsdService::penniesToUsd($participationFee),
-                'participationFeePaid' => ConvertToUsdService::penniesToUsd($this->getParticipationFeePaid($versionId)),
-                'participationAmountDue' => ConvertToUsdService::penniesToUsd($participationAmountDue),
-                'ePayVendor' => $ePayVendor,
-            ];
+            if ($candidateId) {
+                $version = Version::find($versionId);
 
-            $this->customProperties = $this->getCustomRehearsalProperties($versionId, $participationAmountDue);
+                $participationFee = $version->fee_participation;
+                $participationFeePaid = $this->getParticipationFeePaid($versionId);
+                $participationAmountDue = ($participationFee - $participationFeePaid);
+                $shortName = $version->short_name;
+                $ePayVendor = $version->epayment_vendor;
+
+                $rehearsals[$versionId] = [
+                    'versionId' => $versionId,
+                    'versionShortName' => $shortName,
+                    'ensembleName' => $this->getRehearsalEnsembleName($versionId),
+                    'participationFee' => ConvertToUsdService::penniesToUsd($participationFee),
+                    'participationFeePaid' => ConvertToUsdService::penniesToUsd($this->getParticipationFeePaid($versionId)),
+                    'participationAmountDue' => ConvertToUsdService::penniesToUsd($participationAmountDue),
+                    'ePayVendor' => $ePayVendor,
+                ];
+
+                $this->customProperties = $this->getCustomRehearsalProperties($versionId, $participationAmountDue);
+            }
         }
 
         return $rehearsals;
