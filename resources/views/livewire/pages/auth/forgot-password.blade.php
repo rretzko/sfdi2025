@@ -41,6 +41,12 @@ new #[Layout('layouts.guest')] class extends Component
         {{ __('Forgot your password? No problem. Just let us know your email address and we will email you a password reset link that will allow you to choose a new one.') }}
     </div>
 
+    {{-- ADVISORY --}}
+    <div class="mb-4 text-sm text-gray-600 border border-white border-t-gray-300 border-b-gray-300 py-2 text-red-600">
+        <p class="mb-2">{{ __("If you use a school-based email address, you may not be able to receive our 'Forgot Password' email due to your school's network restrictions.") }}</p>
+        <p>{{ __("If you have not received our email within five minutes, please ask your teacher to reset your password from their 'Students' page.")}}</p>
+    </div>
+
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 

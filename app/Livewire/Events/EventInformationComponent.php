@@ -131,6 +131,7 @@ public bool $sandbox = false; //false;
 
         //participation contracts
         $this->participationContracts = $this->setParticipationContracts();
+
     }
 
     public function render()
@@ -271,7 +272,7 @@ public bool $sandbox = false; //false;
             (string) $candidate->student->user_id,
             (string) $versionId,
             (string) $candidate->school_id,
-            (string) ConvertToUsdService::penniesToUsd($amountDue),
+            (string) $amountDue,
             (string) $candidateId,
             (string) $feeType,
             auth()->user()->name, //additional identification info
@@ -508,7 +509,7 @@ public bool $sandbox = false; //false;
 
     private function setEpaymentVars(): void
     {
-$this->sandbox = false;
+        $this->sandbox = false;
 
         if(isset($this->form->version)) {
             //PAYPAL
@@ -538,6 +539,46 @@ $this->sandbox = false;
                 ? $address->geostateAbbr
                 : 'NJ';
         }
+    }
+
+    private function setEpaymentVarsRehearsals(array $rehearsals): void
+    {
+        //reinforcement
+        $this->sandbox = false;
+
+        /** @todo This assumes that student will be engaged in ONLY one rehearsal at a time, which will eventually be wrong. */
+        $data = $rehearsals[array_key_first($rehearsals)];
+        $versionId = $data['versionId'];
+        $version = Version::find($versionId);
+
+        //PAYPAL
+        $this->amountDue = $data['participationAmountDue'];
+        $this->customProperties = $this->getCustomProperties();
+        $this->email = auth()->user()->email;
+        $this->epaymentId = $this->getEpaymentId();
+        $this->form->ePaymentId = $this->epaymentId;
+        $this->feePaid = ConvertToUsdService::penniesToUsd($data['participationFeePaid']);
+        //$this->teacherName = $this->form->teacherFullName;
+        $this->versionShortName = "$version->short_name participation";
+        $this->versionId = $version->id;
+        $this->customProperties = $this->getCustomRehearsalProperties($versionId, $data['participationAmountDue']);
+        //SQUARE
+        $user = auth()->user();
+        $address = Address::where('user_id', $user->id)->first();
+        $student = Student::where('user_id', $user->id)->first();
+        $this->firstName = $user->first_name;
+        $this->lastName = $user->last_name;
+        $this->email = $user->email;
+        $this->phone = ($student->phoneMobile) ?: ($student->phoneHome ?: '');
+        $this->addressLines = ($address)
+            ? [$address->address1, $address->address2]
+            : [];
+        $this->city = ($address)
+            ? $address->city
+            : '';
+        $this->geostateAbbr = ($address)
+            ? $address->geostateAbbr
+            : 'NJ';
     }
 
     /**
@@ -608,6 +649,10 @@ $this->sandbox = false;
 
                 $this->customProperties = $this->getCustomRehearsalProperties($versionId, $participationAmountDue);
             }
+        }
+
+        if(count($rehearsals)){
+            $this->setEpaymentVarsRehearsals($rehearsals);
         }
 
         return $rehearsals;

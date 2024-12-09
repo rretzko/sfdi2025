@@ -264,7 +264,7 @@
                         </div>
 
                         {{-- PARTICIPATION CONTRACT --}}
-                        @if(array_key_exists($rehearsal['versionId'], $participationContracts))
+                        @if(array_key_exists($rehearsal['versionId'], $participationContracts) && $participationContracts[$rehearsal['versionId']]['participationContract'])
                             <div class="text-blue-500 my-4">
                                 <button
                                     type="button"
