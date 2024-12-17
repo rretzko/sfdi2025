@@ -375,6 +375,16 @@ public bool $sandbox = false; //false;
             ->value('event_ensembles.ensemble_name');
     }
 
+    private function getRehearsalEpaymentId(int $versionId): string
+    {
+        $epaymentCredentials = EpaymentCredentials::where('version_id', $versionId)->first();
+        if(! $epaymentCredentials){
+            $version = Version::find($versionId);
+            $epaymentCredentials = EpaymentCredentials::where('event_id', $version->event_id)->first();
+        }
+        return $epaymentCredentials->epayment_id;
+    }
+
     private function getRequiresHomeAddress(): bool
     {
         $version = Version::find($this->form->versionId) ?? new Version();
@@ -516,7 +526,7 @@ public bool $sandbox = false; //false;
             $this->amountDue = $this->getAmountDue();
             $this->customProperties = $this->getCustomProperties();
             $this->email = auth()->user()->email;
-            $this->epaymentId = $this->getEpaymentId();
+            $this->epaymentId = $this->form->ePaymentId;
             $this->feePaid = ConvertToUsdService::penniesToUsd($this->getFeePaid());
             $this->teacherName = $this->form->teacherFullName;
             $this->versionShortName = $this->form->version->short_name;
@@ -556,7 +566,7 @@ public bool $sandbox = false; //false;
         $this->customProperties = $this->getCustomProperties();
         $this->email = auth()->user()->email;
         $this->epaymentId = $this->getEpaymentId();
-        $this->form->ePaymentId = $this->epaymentId;
+        $this->form->ePaymentId = $this->getRehearsalEpaymentId($versionId);//$this->epaymentId;
         $this->feePaid = ConvertToUsdService::penniesToUsd($data['participationFeePaid']);
         //$this->teacherName = $this->form->teacherFullName;
         $this->versionShortName = "$version->short_name participation";
