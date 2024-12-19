@@ -16,6 +16,7 @@ use App\Models\Student;
 use App\Models\StudentTeacher;
 use App\Models\Teacher;
 use App\Models\Version;
+use App\Models\VersionConfigEmergencyContact;
 use App\Models\VersionConfigRegistrant;
 use App\Models\VoicePart;
 use App\Services\CalcGradeFromClassOfService;
@@ -452,10 +453,11 @@ public bool $sandbox = false; //false;
 
     private function makeFileName(string $uploadType): string
     {
-        //ex: 661234_scales.mp3
+        //ex: 661234_scales_63.mp3
         $fileName = $this->form->candidateId;
         $fileName .= '_';
-        $fileName .= $uploadType;
+        $fileName .= str_replace(' ', '_', $uploadType);
+        $fileName .= '_' . $this->form->voicePartId;
         $fileName .= '.';
         $fileName .= pathInfo($this->auditionFiles[$uploadType]->getClientOriginalName(), PATHINFO_EXTENSION);
 
@@ -473,18 +475,7 @@ public bool $sandbox = false; //false;
         }
 
 //      MISSING EMERGENCY CONTACT
-        if(! $this->form->emergencyContactId){
-            $a[] = 'You must select and save an emergency contact before you can complete your application.';
-        }
-
-//      MISSING EMERGENCY CONTACT BEST PHONE --}}
-        $ec = $this->form->emergencyContactId ? EmergencyContact::find($this->form->emergencyContactId) : new EmergencyContact();
-        $bestPhoneType = $ec ? $ec->best_phone : 'mobile';
-        $property = 'phone_' . $bestPhoneType;
-        $phoneNumber = $ec ? $ec->$property : '';
-        if(! $phoneNumber){
-            $a[] = "Your emergency contact must have a 'best phone' selected before you can complete your application.";
-        }
+        $this->setEmergencyContactErrors($a);
 
 //      MISSING HOME ADDRESS
         if($this->form->requiresHomeAddress && (! $this->form->addressString)){
@@ -512,6 +503,30 @@ public bool $sandbox = false; //false;
             }//else{
 
 //                dd($this->events);
+//            }
+        }
+
+    }
+
+    private function setEmergencyContactErrors(&$a)
+    {
+        $versionConfigEmergencyContact = VersionConfigEmergencyContact::where('version_id', $this->versionId)->first();
+
+        if($versionConfigEmergencyContact){
+
+            if($versionConfigEmergencyContact->ec_name){
+                if(! $this->form->emergencyContactId){
+                    $a[] = 'You must select and save an emergency contact before you can complete your application.';
+                }
+            }
+
+//      MISSING EMERGENCY CONTACT BEST PHONE --}}
+//            $ec = $this->form->emergencyContactId ? EmergencyContact::find($this->form->emergencyContactId) : new EmergencyContact();
+//            $bestPhoneType = $ec ? $ec->best_phone : 'mobile';
+//            $property = 'phone_' . $bestPhoneType;
+//            $phoneNumber = $ec ? $ec->$property : '';
+//            if(! $phoneNumber){
+//                $a[] = "Your emergency contact should have a 'best phone' selected before you can complete your application.";
 //            }
         }
 

@@ -132,52 +132,72 @@
             @include('components.partials.home-address')
         @endif {{-- end of requiresHomeAddress --}}
 
-        {{-- EMERGENCY CONTACTS --}}
-        <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
-            <label for="" class="font-semibold">Emergency Contact(s)
-                <span class="text-xs italic"> (Select one)</span>
-            </label>
+        @if($form->requiresEmergencyContact)
 
-            @forelse($emergencyContacts AS $key => $emergencyContact)
+            {{-- EMERGENCY CONTACTS --}}
+            <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
+                <label for="" class="font-semibold">Emergency Contact(s)
+                    <span class="text-xs italic"> (Select one)</span>
+                </label>
 
-                <div class="flex flex-row space-x-2" wire:key="ec-{{ $emergencyContact['id'] }}">
-                    <input type="radio"
-                           wire:model.live="form.emergencyContactId"
-                           value="{{ $emergencyContact['id'] }}"
-                           class="self-center"
-                           @disabled($emergencyContact['bestPhone'] === 'missing')
-                    >
-                    <label for="form.emergencyContactId"
-                        class="@if($emergencyContact['bestPhone'] === 'missing') text-red-600 @endif"
-                    >
-                        {{ $emergencyContact['name'] }} (Best Phone: {{ $emergencyContact['bestPhone'] }})
-                    </label>
-                </div>
-            @empty
-                <div class="text-red-600">
-                    No Emergency Contacts found.  Please add your emergency contact information using
-                    the "Emergency Contacts" link at the top of this page.
-                </div>
-            @endforelse
-            {{-- SAVED MESSAGE --}}
-            <div class="mt-6 ml-4">
-                <x-action-message class="me-3 text-green-600 self-center" on="emergency-contact-id-updated">
-                    {{ __('Saved.') }}
-                </x-action-message>
-            </div>
-        </fieldset>
+                @if(count($form->emergencyContactErrors))
+                    <div class="text-red-600">
+                        <ul class="list-disc ml-8">
+                            @foreach($form->emergencyContactErrors AS $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @elseif($form->emergencyContactId)
+                    {!! $form->emergencyContactString !!}
+                @else
+
+                    @forelse($form->emergencyContacts AS $key => $emergencyContact)
+
+                        <div class="flex flex-row space-x-2" wire:key="ec-{{ $emergencyContact['id'] }}">
+                            <input type="radio"
+                                   wire:model.live="form.emergencyContactId"
+                                   value="{{ $emergencyContact['id'] }}"
+                                   class="self-center"
+                                   @disabled($emergencyContact['bestPhone'] === 'missing')
+                            >
+                            <label for="form.emergencyContactId"
+                                class="@if($emergencyContact['bestPhone'] === 'missing') text-red-600 @endif"
+                            >
+                                {{ $emergencyContact['name'] }} (Best Phone: {{ $emergencyContact['bestPhone'] }})
+                            </label>
+                        </div>
+                    @empty
+                        <div class="text-red-600">
+                            No Emergency Contacts found.  Please add your emergency contact information using
+                            the "Emergency Contacts" link at the top of this page.
+                        </div>
+                    @endforelse
+                    {{-- SAVED MESSAGE --}}
+                    <div class="mt-6 ml-4">
+                        <x-action-message class="me-3 text-green-600 self-center" on="emergency-contact-id-updated">
+                            {{ __('Saved.') }}
+                        </x-action-message>
+                    </div>
+                @endif
+            </fieldset>
+        @endif
 
         {{-- APPLICATION --}}
         <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
             <label for="" class="font-semibold">Application</label>
 
             {{-- PRE-CHECK APPLICATION ERRORS --}}
-            @if(count($applicationErrors))
+            @if(count($applicationErrors) || count($form->emergencyContactErrors))
                 <h3 class="font-semibold text-red-600 underline">
                     The following must be corrected before an application can be prepared:
                 </h3>
                 <ul class="ml-8 list-disc">
                     @foreach($applicationErrors AS $message)
+                        <li class="text-red-600">{{ $message }}</li>
+                    @endforeach
+
+                        @foreach($form->emergencyContactErrors AS $message)
                         <li class="text-red-600">{{ $message }}</li>
                     @endforeach
                 </ul>

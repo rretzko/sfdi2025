@@ -17,6 +17,7 @@ use App\Models\User;
 use App\Models\Version;
 use App\Models\VersionConfigAdjudication;
 use App\Models\VersionConfigDate;
+use App\Models\VersionConfigEmergencyContact;
 use App\Models\VersionConfigRegistrant;
 use App\Models\VersionPitchFile;
 use App\Models\VersionTeacherConfig;
@@ -28,6 +29,7 @@ use App\ValueObjects\PhoneStringValueObject;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use JetBrains\PhpStorm\NoReturn;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
 
@@ -45,9 +47,14 @@ class VersionRegistrationForm extends Form
     public bool $eapplication = false;
     public string $email = '';
     public int $emergencyContactId = 0;
-    public string $emergencyContactName = '';
-    public string $emergencyContactString = '';
     public string $emergencyContactBestPhone = 'missing';
+    public string $emergencyContactEmail = '';
+    public array $emergencyContactErrors = [];
+    public string $emergencyContactName = '';
+    public string $emergencyContactPhoneMobile = '';
+    public array $emergencyContacts = [];
+    public string $emergencyContactString = '';
+
     public bool $ePay = true;
     public string $ePayVendor = 'none';
     public string $ePaymentId = '';
@@ -68,6 +75,7 @@ class VersionRegistrationForm extends Form
     public string $pronounPossessive = '';
     public array $recordings = []; //store Recording object details [fileType][url/approved datetime] = value
     public bool $requiresHomeAddress = false;
+    public bool $requiresEmergencyContact =  false;
     public string $schoolName = '';
     public bool $signatureGuardian = false;
     public bool $signatureStudent = false;
@@ -148,8 +156,8 @@ class VersionRegistrationForm extends Form
         $this->candidateId = $this->candidate->id;
         $this->candidateVoicePartDescr = VoicePart::find($this->candidate->voice_part_id)->descr;
         $this->emergencyContactId = $this->candidate->emergency_contact_id;
-        $this->emergencyContactString = $this->getEmergencyContactString();
-        $this->emergencyContactName = EmergencyContact::find($this->emergencyContactId)->name ?? '';
+//        $this->emergencyContactString = $this->getEmergencyContactString();
+//        $this->emergencyContactName = EmergencyContact::find($this->emergencyContactId)->name ?? '';
         $this->programName = $this->candidate->program_name;
         $pronoun = Pronoun::find($this->candidate->student->user->pronoun_id);
         $this->pronounDescr = $pronoun->descr;
@@ -176,8 +184,39 @@ class VersionRegistrationForm extends Form
         $this->postalCode = $address->postal_code ?? '';
 
         //emergency contact
-        if($this->emergencyContactId){
-            $this->emergencyContactBestPhone = EmergencyContact::find($this->emergencyContactId)->best_phone ?? 'missing';
+        if($this->emergencyContactIsRequired()) {
+
+            //set switch
+            $this->requiresEmergencyContact = true;
+
+            //clear artifacts
+            $this->emergencyContactName = '';
+            $this->emergencyContactEmail = '';
+            $this->emergencyContactPhoneMobile = '';
+            $this->emergencyContactString = '';
+
+            //set variables for existing emergency contact &
+            //test for errors
+            if ($this->emergencyContactId) {
+                $this->setEmergencyContactVars();
+                $this->testEmergencyContactRequirements();
+                $this->emergencyContactString = $this->getEmergencyContactString();
+            }elseif ($this->userHasEmergencyContacts()){
+                $ecs = EmergencyContact::where('student_id', $this->student->id)->get();
+                if($ecs->count() === 1){
+                    $this->emergencyContactId = $ecs->first()->id;
+                    $this->setEmergencyContactVars();
+                    $this->testEmergencyContactRequirements();
+                }else{
+                    foreach($ecs AS $ec){
+                        $this->emergencyContacts[] = [
+                            'id' => $ec->id,
+                            'bestPhone' => $ec->best_phone,
+                            'name' => $ec->name,
+                        ];
+                    }
+                }
+            }
         }
 
         //recordings
@@ -219,8 +258,12 @@ class VersionRegistrationForm extends Form
 
     public function updateEmergencyContactId()
     {
-        $this->emergencyContactBestPhone = EmergencyContact::find($this->emergencyContactId)->best_phone ?? 'missing';
-        return $this->candidate->update(['emergency_contact_id' => $this->emergencyContactId]);
+//        $this->emergencyContactBestPhone = EmergencyContact::find($this->emergencyContactId)->best_phone ?? 'missing';
+        $updated = $this->candidate->update(['emergency_contact_id' => $this->emergencyContactId]);
+        $this->setEmergencyContactVars();
+        $this->testEmergencyContactRequirements();
+        $this->emergencyContactString = $this->getEmergencyContactString();
+        return $updated;
     }
 
     public function updateGeostateId()
@@ -292,6 +335,16 @@ class VersionRegistrationForm extends Form
         return $updated;
     }
 
+    private function emergencyContactIsRequired(): bool
+    {
+        $versionConfigEmergencyContact = VersionConfigEmergencyContact::where('version_id', $this->versionId)->first();
+
+        return ($versionConfigEmergencyContact &&
+            ($versionConfigEmergencyContact->ec_name ||
+                $versionConfigEmergencyContact->ec_email ||
+                $versionConfigEmergencyContact->ec_phone_mobile));
+    }
+
     private function getEmergencyContactString(): string
     {
         $ec = EmergencyContact::find($this->emergencyContactId) ?? new EmergencyContact();
@@ -299,7 +352,8 @@ class VersionRegistrationForm extends Form
         $bestPhoneNumber = $bestPhone . '_phone';
         $str = $ec->name;
         $str .= (strlen($ec->email)) ? ', ' . $ec->email : '';
-        $str .= ", <span class='font-semibold'>" . $ec->$bestPhoneNumber . ' (' . substr($bestPhone,0,1) . ')</span>';
+        $str .= (strlen($ec->phone_mobile)) ? ', ' . $ec->phone_mobile . ' (c)' : '';
+//        $str .= ", <span class='font-semibold'>" . $ec->$bestPhoneNumber . ' (' . substr($bestPhone,0,1) . ')</span>';
 
         return $str;
     }
@@ -392,7 +446,14 @@ class VersionRegistrationForm extends Form
             ->toArray();
     }
 
-
+    private function setEmergencyContactVars(): void
+    {
+        $ec = EmergencyContact::find($this->emergencyContactId);
+        $this->emergencyContactBestPhone = $ec->best_phone ?? 'missing';
+        $this->emergencyContactName = $ec->name;
+        $this->emergencyContactEmail = $ec->email;
+        $this->emergencyContactPhoneMobile = $ec->phone_mobile;
+    }
 
     /**
      * Return true if version allows ePayments by the student
@@ -443,6 +504,23 @@ class VersionRegistrationForm extends Form
         }
     }
 
+    #[NoReturn] private function testEmergencyContactRequirements(): void
+    {
+        $versionConfigEmergencyContact = VersionConfigEmergencyContact::where('version_id', $this->versionId)->first();
+
+        if($versionConfigEmergencyContact->ec_name && (!strlen($this->emergencyContactName))){
+            $this->emergencyContactErrors[] = 'Emergency Contact name is required but is missing.';
+        }
+
+        if($versionConfigEmergencyContact->ec_email && (!strlen($this->emergencyContactEmail))){
+            $this->emergencyContactErrors[] = 'Emergency Contact email is required but is missing.';
+        }
+
+        if($versionConfigEmergencyContact->ec_phone_mobile && (!strlen($this->emergencyContactPhoneMobile))){
+            $this->emergencyContactErrors[] = 'Emergency Contact cell phone is required but is missing.';
+        }
+    }
+
     private function updateAddress()
     {
         return Address::updateOrCreate(
@@ -458,5 +536,10 @@ class VersionRegistrationForm extends Form
             ]
         );
 
+    }
+
+    private function userHasEmergencyContacts(): bool
+    {
+        return EmergencyContact::where('student_id', $this->student->id)->exists();
     }
 }

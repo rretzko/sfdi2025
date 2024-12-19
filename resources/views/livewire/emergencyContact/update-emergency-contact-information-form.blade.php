@@ -303,7 +303,7 @@ new class extends Component
             <div>
                 {{-- NAME --}}
                 <x-input-label for="emergencyContactName" :value="__('Emergency Contact Name')" />
-                <input type="text" wire:model="emergencyContactName" />
+                <input type="text" wire:model="emergencyContactName" required/>
                 <x-input-error class="mt-2" :messages="$errors->get('emergencyContactName')" />
             </div>
 

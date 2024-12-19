@@ -20,10 +20,10 @@ class EmergencyContact extends Model
         'best_phone',
     ];
 
-    public function bestPhone(): BelongsTo
-    {
-        return $this->belongsTo(\string::class, 'bestPhone');
-    }
+//    public function bestPhone(): BelongsTo
+//    {
+//        return $this->belongsTo(\string::class, 'bestPhone');
+//    }
 
     public function emergencyContactType(): BelongsTo
     {
