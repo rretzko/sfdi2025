@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Candidate;
+use App\Models\VersionConfigDate;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -26,8 +27,10 @@ class FindStudentOpenRehearsalsService
 
         $participationVersions = array_unique(array_merge($hasParticipationContracts, $hasParticipationFees));
 
+        $participationFeeDateCheck =  $this->checkParticipationFeeDates($participationVersions);
+
         //return the filtered version_id
-        $this->rehearsals = $participationVersions;
+        $this->rehearsals = $participationFeeDateCheck;
     }
 
     public function getRehearsals(): array
@@ -36,6 +39,28 @@ class FindStudentOpenRehearsalsService
     }
 
 /** END OF PUBLIC FUNCTIONS **************************************************/
+
+    private function checkParticipationFeeDates(array $versionIds): array
+    {
+        $a = [];
+
+        foreach($versionIds AS $versionId){
+
+            $participationFeeCloseDate = VersionConfigDate::query()
+                ->where('version_id', $versionId)
+                ->where('date_type', 'participation_fee_close')
+                ->value('version_date');
+
+            $now = Carbon::now();
+
+            if($participationFeeCloseDate && ($participationFeeCloseDate >= $now)){
+
+                $a[] = $versionId;
+            }
+        }
+
+        return $a;
+    }
 
     private function getCandidateIds(): array
     {
@@ -81,18 +106,17 @@ class FindStudentOpenRehearsalsService
      */
     private function getVersionParticipationContract(array $versionIds): array
     {
+        return DB::table('versions')
+            ->whereIn('id', $versionIds)
+            ->where('participation_contract', 1)
+            ->pluck('id')
+            ->toArray();
         //workaround
-        $vars = [81,82,83];
-
-        return count($versionIds)
-            ? [81]
-            : [];
-
-//        return DB::table('versions')
-//            ->whereIn('id', $versionIds)
-//            ->where('fee_participation', "!=", 0)
-//            ->pluck('id')
-//            ->toArray();
+//        $vars = [81,82,83];
+//
+//        return count($versionIds)
+//            ? [81]
+//            : [];
     }
 
     private function getVersionParticipationFees(array $versionIds): array
