@@ -237,21 +237,30 @@
             @if($form->ePay)
                 @if($amountDue)
 
-                    {{-- PAYPAL --}}
-                    @if($form->ePayVendor === 'paypal')
-                        @include('components.partials.payPal' )
-                    @endif
+                    {{-- MISSING EPAYMENT ID ADVISORY --}}
+                    @if($hasEpaymentId)
 
-                    {{-- SQUARE --}}
-                    @if($form->ePayVendor === 'square')
-{{--                        @include('square.squareInApp')--}}
-                        <div>
-                            Please note: You will be asked for an ID when paying through Square.<br />
-                            Please enter: <span class="font-semibold text-lg font-mono">{{ $squareId }}</span> for your ID.
-                        </div>
-                        @include('square.buyButton')
-                        <div id="advisory" class="text-xs text-red-600">
-                            Please note: Payment record updates may take as long as 24-hours during the work week and by Monday at noon over the weekend.
+                        {{-- PAYPAL --}}
+                        @if($form->ePayVendor === 'paypal')
+                            @include('components.partials.payPal' )
+                        @endif
+
+                        {{-- SQUARE --}}
+                        @if($form->ePayVendor === 'square')
+    {{--                        @include('square.squareInApp')--}}
+                            <div>
+                                Please note: You will be asked for an ID when paying through Square.<br />
+                                Please enter: <span class="font-semibold text-lg font-mono">{{ $squareId }}</span> for your ID.
+                            </div>
+                            @include('square.buyButton')
+                            <div id="advisory" class="text-xs text-red-600">
+                                Please note: Payment record updates may take as long as 24-hours during the work week and by Monday at noon over the weekend.
+                            </div>
+                        @endif
+                    @else
+                        <div class="border border-gray-600 mt-2 mx-2 w-1/2 p-2 text-sm bg-gray-200 shadow-lg">
+                            Please note: The Epayment credentials are currently pending.  You will be able to make your
+                            epayment as soon as the credentials are confirmed.
                         </div>
                     @endif
                 @else

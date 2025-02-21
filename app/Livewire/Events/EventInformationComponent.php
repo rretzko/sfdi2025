@@ -48,6 +48,7 @@ class EventInformationComponent extends Component
     public string $eventsCsv = 'No events found.';
     public array $geostates = [];
     public int $grade = 4;
+    public bool $hasEpaymentId = false;
     public Teacher $latestTeacher;
     public string $logo = '';
     public array $participationContracts = [];
@@ -132,6 +133,9 @@ public bool $sandbox = false; //false;
 
         //participation contracts
         $this->participationContracts = $this->setParticipationContracts();
+
+        //epaymentId
+        $this->setEpaymentCredentials();
 
     }
 
@@ -530,6 +534,19 @@ public bool $sandbox = false; //false;
 //            }
         }
 
+    }
+
+    private function setEpaymentCredentials(): void
+    {
+        $version = Version::find($this->versionId);
+        $ePaymentCredentials = EpaymentCredentials::where('version_id', $version->id)->first();
+        if(!$ePaymentCredentials){
+            $eventId = $version->event_id;
+            $ePaymentCredentials = EpaymentCredentials::where('event_id', $eventId)->first();
+        }
+        if ($ePaymentCredentials) {
+            $this->hasEpaymentId = $ePaymentCredentials->epayment_id !== 'pending';
+        }
     }
 
     private function setEpaymentVars(): void
