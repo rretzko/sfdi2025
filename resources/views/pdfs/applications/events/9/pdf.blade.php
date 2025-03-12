@@ -24,7 +24,7 @@
         <tbody>
         <tr>
             <td>
-                <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
+                <img src="logos/nj-mea-logo.jpg"
                      alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
             </td>
             <td style="">
@@ -106,37 +106,22 @@
                         I fail to learn my music.
                     </li>
                     <li>
-                        @if(count($dto['ensembleNames']))
-                            I understand that {{ $dto['ensembleNames'][1] }} members are expected to attend all
-                            rehearsals from
-                            October through November.
-                            @if(array_key_exists(1, $dto['ensembleNames']))
-                                {{ $dto['ensembleNames'][0] }} rehearsals are held in January through February.  One
-                                absence will result in testing at the following rehearsal.
-                            @endif
-                        @else
-                            <span style="color: red;">[No ensembles found]</span>
-                        @endif
-                        An absence is defined as missing any
+                        I understand that Mixed Chorus members are expected to attend all rehearsals from October
+                        through November. Treble Chorus rehearsals are held in January through February.  One
+                        absence will result in testing at the following rehearsal. An absence is defined as missing any
                         scheduled rehearsal or any part thereof. I further understand that all activities must be
-                        attended in their entirety.
-                        I understand that it is not possible for me to be a member of the {{ $dto['versionShortName'] }}
-                        and participate in fall
-                        activities including Conference/NJSIAA tournament games that may take place before/during the
-                        completion of my {{ $dto['versionShortName'] }} obligations. Failure to fulfill
-                        my {{ $dto['versionShortName'] }} obligations will
-                        result in disqualification from any {{ $dto['organizationName'] }} sponsored event for the
-                        period of one year, up to and
-                        including the applicable event. I understand that the manager, with the approval of the NJ
-                        All-State
-                        Choral Procedures Committee, will resolve all serious conflicts and/or questionable
-                        circumstances
-                        not specifically covered by the above.
+                        attended in their entirety. I understand that it is not possible for me to be a member of
+                        the {{ $dto['versionShortName'] }} and participate in fall activities including Conference/NJSIAA
+                        tournament games that may take place before/during the completion of my
+                        {{ $dto['versionShortName'] }} obligations. Failure to fulfill my {{ $dto['versionShortName'] }}
+                        obligations will result in disqualification from any {{ $dto['organizationName'] }} sponsored
+                        event for the period of one year, up to and including the applicable event. I understand that
+                        the manager, with the approval of the NJ All-State Choral Procedures Committee, will resolve all
+                        serious conflicts and/or questionable circumstances not specifically covered by the above.
                     </li>
                     <li>
                         I will respect the property of others, will act professionally, and will treat all members of
-                        the
-                        ensemble with respect.
+                        the ensemble with respect.
                     </li>
                     <li>
                         I will learn all the music to the best of my ability. <b>Chorus members agree to memorize all
@@ -144,8 +129,7 @@
                     </li>
                     <li>
                         I will cooperate fully with managers, counselors, and all other administrative officials of the
-                        {{ $dto['versionShortName'] }} and the New Jersey Music Educators
-                        Association{{ $dto['organizationName'] }}.
+                        {{ $dto['versionShortName'] }} and the New Jersey Music Educators Association.
                     </li>
                     <li>
                         I will assume all responsibility for my music, folder, performance apparel, luggage and other
@@ -156,28 +140,17 @@
                         weapons of any kind.
                     </li>
                     <li>
-                        I acknowledge that
-                        @if(count($dto['ensembleNames']))
-                            {{ $dto['ensembleNames'][1] }}
-                        @else
-                            <span style="color: red;">[No ensemble found]</span>
-                        @endif
-                        members may not also participate in any of these other
+                        I acknowledge that Mixed Chorus members may not also participate in any of these other
                         NJ All-State ensembles: Orchestra, Jazz Ensemble or Vocal Jazz Ensemble.
-                        @if(array_key_exists(1, $dto['ensembleNames']))
-                            {{ $dto['ensembleNames'][0] }} members may not be a member of the NJ All-State Band.
-                        @endif
+                        Treble Chorus members may not be a member of the NJ All-State Band.
                     </li>
                     <li>
                         I understand that a total evaluation of my {{ $dto['versionShortName'] }} experience is used to
-                        determine any
-                        recommendation for the Governor's Award, All-Eastern and/or National High School Ensembles. In
-                        addition to my placement in the {{ $dto['versionShortName'] }}, such factors as behavior,
-                        promptness and
-                        preparedness for rehearsals will also be considered. I understand the Administrative
+                        determine any recommendation for the Governor's Award, All-Eastern and/or National High School Ensembles.
+                        In addition to my placement in the {{ $dto['versionShortName'] }}, such factors as behavior,
+                        promptness and preparedness for rehearsals will also be considered. I understand the Administrative
                         personnel with the approval of the {{ $dto['versionShortName'] }} Choral Procedures Committee(s)
-                        will make these
-                        recommendations.
+                        will make these recommendations.
                     </li>
                     <li>
                         I will adhere to all dates concerning fees/forms or any other deadlines requested for my
@@ -185,17 +158,14 @@
                     </li>
                     <li>
                         I understand that {{ $dto['versionShortName'] }} members are required to comply with all
-                        obligations set
-                        forth above. Non-compliance with any provision contained herein shall constitute a breach of
-                        this Agreement and shall serve as the basis of the participant's immediate termination and
-                        exclusion from all performances.
+                        obligations set forth above. Non-compliance with any provision contained herein shall constitute
+                        a breach of this Agreement and shall serve as the basis of the participant's immediate termination
+                        and exclusion from all performances.
                     </li>
                     <li>
                         I further understand that as a {{ $dto['versionShortName'] }} member, I must remain an active
-                        member in
-                        good standing with the school ensemble that corresponds to my {{ $dto['versionShortName'] }}
-                        ensemble throughout
-                        my entire All-State experience.
+                        member in good standing with the school ensemble that corresponds to my {{ $dto['versionShortName'] }}
+                        ensemble throughout my entire All-State experience.
                     </li>
                 </ul>
 
@@ -225,7 +195,7 @@
         <tbody>
         <tr>
             <td>
-                <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
+                <img src="logos/nj-mea-logo.jpg" {{-- "{{ Storage::disk('s3')->url($dto['logoPdf']) }}" --}}
                      alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
             </td>
             <td style="">
@@ -295,14 +265,12 @@
                 read the endorsement, which {{ $dto['first'] }} has signed, and I give permission
                 for {{ $dto['pronounObject'] }} to audition to become a member of the
                 {{ $dto['versionShortName'] }}. I promise to assist {{ $dto['first'] }} in
-                fulfilling {{ $dto['versionShortName'] }} obligations and in meeting any expenses necessary for
-                rehearsals and concerts. I
-                understand it is the policy of {{ $dto['organizationName'] }} that if an All-State student is
-                incapacitated in any way that
-                requires additional assistance, it will be the responsibility of the All-State student's
-                parent/guardian/school
-                to provide the necessary help at all rehearsals, meals, concerts, etc. The provided chaperone will be
-                housed with the student and will be charged the regular student housing fee.
+                fulfilling the {{ $dto['versionShortName'] }} obligations and in meeting any expenses necessary for
+                rehearsals and concerts. I understand it is the policy of {{ $dto['organizationName'] }} that if an
+                All-State student is incapacitated in any way that requires additional assistance, it will be the
+                responsibility of the All-State student's parent/guardian/school to provide the necessary help at all
+                rehearsals, meals, concerts, etc. The provided chaperone will be housed with the student and will be
+                charged the regular student housing fee.
             </div>
         </div>{{-- end of class=conditions --}}
 
@@ -314,7 +282,9 @@
                         SIGNATURE OF {{ strtoupper($dto['emergencyContactName']) }}: ________________________ <br/>
                         <span
                             style="font-size: 0.8rem;">{{ strtoupper($dto['emergencyContactName']) }} CELL PHONE: <span
-                                style="@if(strstr($dto['emergencyContactMobile'], 'Emergency')) color: red @endif "{!! $dto['emergencyContactMobile'] !!}</span>
+                                style="@if(strstr($dto['emergencyContactMobile'], "(")) color: red @endif ">
+                                {!! $dto['emergencyContactMobile'] !!}
+                            </span>
 
                     </td>
                     <td style="text-align: right; width: 25%;">
@@ -344,15 +314,14 @@
                 enrolled in grade {{ $dto['grade'] }} at {{ $dto['schoolName'] }}.
                 We understand that <b>{{ $dto['teacherFullName'] }}</b>, who is sponsoring <b>{{ $dto['fullName'] }}</b>,
                 is a current (paid) member of the National Association of Music Educators (NAfME), and is required to
-                participate as a JUDGE FOR ONLINE AUDITIONS, as described in the Directors's Packet,
-                from {{ $dto['auditionPeriod'] }}.
+                participate as a JUDGE FOR ONLINE AUDITIONS, as described in the Directors's Packet.
 
                 We will review this application to ensure that all parts are complete and accurate. This application
-                will be mailed to the Registration Manager postmarked by the application deadline of
+                will be mailed to the Registration Manager postmarked by the application postmark deadline of
                 <b>{{ $dto['applicationDeadline'] }}</b>.
-                LATE APPLICATIONS WILL NOT BE ACCEPTED. If <b>{{ $dto['fullName'] }}</b> is accepted,
-                we will ensure that <b>{{ $dto['first'] }}</b> is prepared and adheres to
-                the rules and regulations set forth by the {{ $dto['organizationName'] }}.
+                LATE APPLICATIONS WILL NOT BE ACCEPTED and all deadlines are non-negotiable.
+                If <b>{{ $dto['fullName'] }}</b> is accepted, we will ensure that <b>{{ $dto['first'] }}</b> is prepared
+                and adheres to the rules and regulations set forth by the {{ $dto['organizationName'] }}.
 
             </div>
 

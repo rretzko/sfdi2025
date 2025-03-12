@@ -85,6 +85,8 @@ class PdfApplicationDataFactory
         $this->dto['teacherPhoneBlock'] = $this->getTeacherPhoneBlock();
         $this->dto['versionName'] = $this->version->name;
         $this->dto['versionShortName'] = $this->version->short_name;
+        $vcd = VersionConfigDate::where('version_id', $this->version->id)->where('date_type', 'postmark_deadline')->first();
+        $this->dto['applicationDeadline'] = Carbon::parse($vcd->version_date)->format('l, M jS, Y'); //Tuesday, January 14th, 2025
     }
 
     private function getAddressString(): string
