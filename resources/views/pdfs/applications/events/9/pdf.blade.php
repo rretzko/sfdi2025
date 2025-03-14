@@ -27,10 +27,11 @@
 {{--                <img src="logos/nj-mea-logo.jpg"--}}
 {{--                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>--}}
                 <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
-                     alt="logo }}" height="60" width="60"/>
+                     alt="logo" height="60" width="60"/>
             </td>
             <td style="">
                 <div style="text-align: center;">
+
                     <div style="font-weight: bold;">
                         {{ $dto['schoolShortName'] }}
                     </div>

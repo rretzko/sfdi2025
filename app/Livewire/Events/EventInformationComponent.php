@@ -80,6 +80,7 @@ class EventInformationComponent extends Component
 public bool $sandbox = false; //false;
     public string $sandboxId = 'sb-qw0iu20847075@business.example.com'; //sandbox account
     public string $sandboxPersonalEmail = 'sb-ndsz820837854@personal.example.com'; //dRkJ4(f)
+    public string $squareCredential = '';
     public string $teacherName = '';
     public int $versionId = 0;
     public string $versionShortName = '';
@@ -127,6 +128,7 @@ public bool $sandbox = false; //false;
 
         //square ID
         $this->squareId = $this->getSquareId();
+        $this->squareCredential = $this->getSquareCredential();
 
         //rehearsals
         $this->rehearsals = $this->setRehearsals();
@@ -397,6 +399,23 @@ public bool $sandbox = false; //false;
         return (bool)! $version->student_home_address ?? 0;
     }
 
+    private function getSquareCredential(): string
+    {
+        $str =  EpaymentCredentials::where('version_id', $this->versionId)
+            ->first()
+            ->epayment_id ?? '';
+
+        if($str){
+            return $str;
+        }
+
+        $eventId = Version::find($this->versionId)->event->id;
+
+        return EpaymentCredentials::where('event_id', $eventId)
+            ->first()
+            ->epayment_id ?? '';
+    }
+
     private function getSquareId(): string
     {
         $candidatedId = Candidate::query()
@@ -538,7 +557,7 @@ public bool $sandbox = false; //false;
 
     private function setEpaymentCredentials(): void
     {
-        $version = Version::find($this->versionId);
+        $version = Version::find(84); //$this->versionId);
         $ePaymentCredentials = EpaymentCredentials::where('version_id', $version->id)->first();
         if(!$ePaymentCredentials){
             $eventId = $version->event_id;

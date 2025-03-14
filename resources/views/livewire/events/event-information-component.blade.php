@@ -238,7 +238,7 @@
                 @if($amountDue)
 
                     {{-- MISSING EPAYMENT ID ADVISORY --}}
-                    @if($hasEpaymentId)
+                    @if($hasEpaymentId && in_array($school->id, [7485,3535,2458,8771]))
 
                         {{-- PAYPAL --}}
                         @if($form->ePayVendor === 'paypal')
@@ -247,10 +247,12 @@
 
                         {{-- SQUARE --}}
                         @if($form->ePayVendor === 'square')
-    {{--                        @include('square.squareInApp')--}}
+
                             <div>
                                 Please note: You will be asked for an ID when paying through Square.<br />
-                                Please enter: <span class="font-semibold text-lg font-mono">{{ $squareId }}</span> for your ID.
+                                Please enter: <span class="font-semibold text-lg font-mono">
+                                    <span class="text-2xl text-red-600">{{ $squareId }}</span>
+                                </span> for your ID.
                             </div>
                             @include('square.buyButton')
                             <div id="advisory" class="text-xs text-red-600">
@@ -316,9 +318,9 @@
                                     @endif
 
                                     {{-- SQUARE --}}
-                                    @if($rehearsal['ePayVendor'] === 'square')
-
-                                        <div>
+                                    @if(($rehearsal['ePayVendor'] === 'square') && (in_array($school->id,[745,3535,2458,8771])))
+<div>SchoolId: {{ $school->id }}</div>
+                                        <div class="bg-gray-200 p-2 border border-gray-800">
                                             Please note: You will be asked for an ID when paying through Square.<br />
                                             Please enter: <span class="font-semibold text-lg font-mono">{{ $squareId }}</span> for your ID.
                                         </div>
