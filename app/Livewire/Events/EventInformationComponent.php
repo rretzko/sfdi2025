@@ -160,6 +160,9 @@ public bool $sandbox = false; //false;
             $this->hideNonPaymentElementsOfApplication = ($now > $studentCloseDate);
         }
 
+        //logo testing
+        $event = Version::find($this->versionId)->event;
+        $this->logo = $event->logo_file;
     }
 
     public function render()
