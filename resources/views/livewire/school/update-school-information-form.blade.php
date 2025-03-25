@@ -113,8 +113,13 @@ new class extends Component
 
         if(\Illuminate\Support\Facades\App::isProduction() && $this->teacherId){
                 $teacher = \App\Models\Teacher::find($this->teacherId);
-                \Illuminate\Support\Facades\Log::info('*** Sending new student email to: ' . $teacher->user->name . '. ***');
         }
+
+        $student = Student::find(auth()->id());
+        $studentId = $student->id;
+        $studentName = $student->user->name;
+
+        \Illuminate\Support\Facades\Log::info('*** Sending new student email for: ' . $studentName . '(id: ' . $studentId . ') to: ' . $teacher->user->name . '. ***');
 
         Illuminate\Support\Facades\Mail::to($teacher->user)->send( new \App\Mail\StudentAddedToRosterMail($teacher));
 
