@@ -16,6 +16,7 @@ use App\Models\Student;
 use App\Models\StudentTeacher;
 use App\Models\Teacher;
 use App\Models\Version;
+use App\Models\VersionConfigDate;
 use App\Models\VersionConfigEmergencyContact;
 use App\Models\VersionConfigRegistrant;
 use App\Models\VoicePart;
@@ -93,6 +94,11 @@ public bool $sandbox = false; //false;
     public string $city = '';
     public string $geostateAbbr = 'NJ';
 
+    /**
+     * WORKAROUND TO KEEP SQUARE PAYMENT BUTTON ACTIVE AFTER STUDENT ACCESS CLOSES
+     */
+    public bool $hideNonPaymentElementsOfApplication;
+
     public function mount()
     {
         $gradeService = new CalcGradeFromClassOfService();
@@ -138,6 +144,21 @@ public bool $sandbox = false; //false;
 
         //epaymentId
         $this->setEpaymentCredentials();
+
+        /**
+         * WORKAROUND TO KEEP SQUARE PAYMENT BUTTON ACTIVE AFTER STUDENT ACCESS CLOSES
+         */
+        $now = Carbon::now();
+        if($this->events) {
+            $currentVersionId = $this->events[0]->id;
+            $studentCloseDate = VersionConfigDate::query()
+                ->where('version_id', $currentVersionId)
+                ->where('date_type', 'student_close')
+                ->first()
+                ->version_date;
+
+            $this->hideNonPaymentElementsOfApplication = ($now > $studentCloseDate);
+        }
 
     }
 

@@ -87,7 +87,12 @@
         <div class="flex flex-col">
 
         {{-- PROGRAM NAME --}}
-        <div class="flex flex-col mb-2">
+        <div
+            @class([
+                "flex flex-col mb-2",
+                $hideNonPaymentElementsOfApplication => 'hidden'
+                ])
+        >
             <label for="form.programName">Name as it should appear in the program</label>
             <div class="flex flex-row space-x-2">
                 <input type="text" wire:model.live.debounce.500ms="form.programName" class="max-w-md" required/>
@@ -104,7 +109,12 @@
         </div>
 
         {{-- VOICE PART --}}
-        <div class="flex flex-col mb-2">
+        <div
+            @class([
+               "flex flex-col mb-2",
+               $hideNonPaymentElementsOfApplication => 'hidden'
+               ])
+        >
             <label for="form.voicePartId">Auditioning on Voice Part</label>
             <div class="flex flex-row space-x-2">
                 <select wire:model.live="form.voicePartId" class="w-fit">
@@ -129,13 +139,15 @@
 
         {{-- HOME ADDRESS --}}
         @if($form->requiresHomeAddress)
-            @include('components.partials.home-address')
+            @if($hideNonPaymentElementsOfApplication)
+                @include('components.partials.home-address')
+            @endif
         @endif {{-- end of requiresHomeAddress --}}
 
         @if($form->requiresEmergencyContact)
-
-            {{-- EMERGENCY CONTACTS --}}
-            <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
+            @if($hideNonPaymentElementsOfApplication)
+                {{-- EMERGENCY CONTACTS --}}
+                <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
                 <label for="" class="font-semibold">Emergency Contact(s)
                     <span class="text-xs italic"> (Select one)</span>
                 </label>
@@ -181,53 +193,60 @@
                     </div>
                 @endif
             </fieldset>
+            @endif
         @endif
 
         {{-- APPLICATION --}}
-        <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
-            <label for="" class="font-semibold">Application</label>
+        @if($hideNonPaymentElementsOfApplication)
+            <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
+                <label for="" class="font-semibold">Application</label>
 
-            {{-- PRE-CHECK APPLICATION ERRORS --}}
-            @if(count($applicationErrors) || count($form->emergencyContactErrors))
-                <h3 class="font-semibold text-red-600 underline">
-                    The following must be corrected before an application can be prepared:
-                </h3>
-                <ul class="ml-8 list-disc">
-                    @foreach($applicationErrors AS $message)
-                        <li class="text-red-600">{{ $message }}</li>
-                    @endforeach
+                {{-- PRE-CHECK APPLICATION ERRORS --}}
+                @if(count($applicationErrors) || count($form->emergencyContactErrors))
+                    <h3 class="font-semibold text-red-600 underline">
+                        The following must be corrected before an application can be prepared:
+                    </h3>
+                    <ul class="ml-8 list-disc">
+                        @foreach($applicationErrors AS $message)
+                            <li class="text-red-600">{{ $message }}</li>
+                        @endforeach
 
-                        @foreach($form->emergencyContactErrors AS $message)
-                        <li class="text-red-600">{{ $message }}</li>
-                    @endforeach
-                </ul>
-            @else
-                {{-- EAPPLICATION --}}
-                @if($form->eapplication)
-                    @include("components.partials.eapplications.versions.$form->versionId.eapplication")
-                @else {{-- BUTTON TO DOWNLOAD APPLICATION --}}
-                    <div>
-                        <button
-                            wire:click="downloadApp()"
-                            type="button"
-                            class="bg-indigo-500 text-white text-xs px-2 rounded-lg shadow-lg"
-                        >
-                            Click to download your application
-                        </button>
-                    </div>
+                            @foreach($form->emergencyContactErrors AS $message)
+                            <li class="text-red-600">{{ $message }}</li>
+                        @endforeach
+                    </ul>
+                @else
+                    {{-- EAPPLICATION --}}
+                    @if($form->eapplication)
+                        @include("components.partials.eapplications.versions.$form->versionId.eapplication")
+                    @else {{-- BUTTON TO DOWNLOAD APPLICATION --}}
+                        <div>
+                            <button
+                                wire:click="downloadApp()"
+                                type="button"
+                                class="bg-indigo-500 text-white text-xs px-2 rounded-lg shadow-lg"
+                            >
+                                Click to download your application
+                            </button>
+                        </div>
+                    @endif
                 @endif
-            @endif
 
-        </fieldset>
+            </fieldset>
+        @endif
 
         {{-- UPLOADS --}}
         @if(($form->uploadType !== 'none') && $form->uploadTypesCount)
-            @include('components.partials.audition-recordings')
+            @if($hideNonPaymentElementsOfApplication)
+                @include('components.partials.audition-recordings')
+            @endif
         @endif
 
         {{-- PITCH FILES --}}
         @if($form->hasPitchFiles)
-            @include('components.partials.pitch-files')
+{{--            @if($hideNonPaymentElementsOfApplication)--}}
+                @include('components.partials.pitch-files')
+{{--            @endif--}}
         @endif
 
         {{-- ePayment --}}
@@ -238,7 +257,7 @@
                 @if($amountDue)
 
                     {{-- MISSING EPAYMENT ID ADVISORY --}}
-                    @if($hasEpaymentId && in_array($school->id, [7485,3535,2458,8771]))
+                    @if($hasEpaymentId)  {{--  && in_array($school->id, [7485,3535,2458,8771])) --}}
 
                         {{-- PAYPAL --}}
                         @if($form->ePayVendor === 'paypal')
@@ -249,10 +268,10 @@
                         @if($form->ePayVendor === 'square')
 
                             <div>
-                                Please note: You will be asked for an ID when paying through Square.<br />
+                                Please note: You will be asked for an PIN Number when paying through Square.<br />
                                 Please enter: <span class="font-semibold text-lg font-mono">
                                     <span class="text-2xl text-red-600">{{ $squareId }}</span>
-                                </span> for your ID.
+                                </span> for your PIN Number.
                             </div>
                             @include('square.buyButton')
                             <div id="advisory" class="text-xs text-red-600">
@@ -318,8 +337,8 @@
                                     @endif
 
                                     {{-- SQUARE --}}
-                                    @if(($rehearsal['ePayVendor'] === 'square') && (in_array($school->id,[745,3535,2458,8771])))
-<div>SchoolId: {{ $school->id }}</div>
+                                    @if(($rehearsal['ePayVendor'] === 'square') && (in_array($school->id,[7485,3535,2458,8771])))
+
                                         <div class="bg-gray-200 p-2 border border-gray-800">
                                             Please note: You will be asked for an ID when paying through Square.<br />
                                             Please enter: <span class="font-semibold text-lg font-mono">{{ $squareId }}</span> for your ID.
