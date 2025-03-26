@@ -24,10 +24,8 @@
         <tbody>
         <tr>
             <td>
-{{--                <img src="logos/nj-mea-logo.jpg"--}}
-{{--                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>--}}
-                <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
-                     alt="logo" height="60" width="60"/>
+                <img src="{{ $dto['logoPdf'] }}"
+                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
             </td>
             <td style="">
                 <div style="text-align: center;">
@@ -285,10 +283,10 @@
                         SIGNATURE OF {{ strtoupper($dto['emergencyContactName']) }}: ________________________ <br/>
                         <span
                             style="font-size: 0.8rem;">{{ strtoupper($dto['emergencyContactName']) }} CELL PHONE: <span
-                                style="@if(strstr($dto['emergencyContactMobile'], "(")) color: red @endif ">
+                                style="@if(strstr($dto['emergencyContactMobile'], '(')) color: red @endif ">
                                 {!! $dto['emergencyContactMobile'] !!}
                             </span>
-
+                        </span>
                     </td>
                     <td style="text-align: right; width: 25%;">
                         DATE: _________
