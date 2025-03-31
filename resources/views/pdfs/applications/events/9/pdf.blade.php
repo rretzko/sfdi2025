@@ -24,7 +24,9 @@
         <tbody>
         <tr>
             <td>
-                <img src="{{ $dto['logoPdf'] }}"
+{{--                <img src="{{ $dto['logoPdf'] }}"--}}
+{{--                     alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>--}}
+                <img src="{{ asset('nj-mea-logo.jpg') }}"
                      alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
             </td>
             <td style="">
@@ -186,9 +188,23 @@
 
         </div>
     </section>
-    {{-- END OF STUDENT ENDORSEMENT --}}
+    {{-- END OF STUDENT ENDORSEMENT WITH PAGE BREAK --}}
 
-    {{-- PAGE BREAK HERE --}}
+    {{-- TESTING --}}
+{{--    <section class="pageBreak" >--}}
+{{--        <div style="margin-bottom: 0.5rem;">$dto['logoPdf']: {{ $dto['logoPdf'] }}</div>--}}
+{{--        <div style="margin-bottom: 0.5rem;">--}}
+{{--            storage::disk('s3')->url($dto['logoPdf']):<br /> {{ Storage::disk('s3')->url($dto['logoPdf']) }}--}}
+{{--        </div>--}}
+{{--        <div>img public/logos:--}}
+{{--            <img src="{{$dto['logoPdf']}}" alt="public/logos not found"--}}
+{{--        </div>--}}
+{{--        <div>--}}
+{{--            img S3: <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
+                alt="storage logos not found" height="60" width="60"/>--}}
+{{--        </div>--}}
+{{--    </section>--}}
+
 
     {{-- START PAGE 2 --}}
     {{-- HEADER --}}
@@ -196,7 +212,7 @@
         <tbody>
         <tr>
             <td>
-                <img src="logos/nj-mea-logo.jpg" {{-- "{{ Storage::disk('s3')->url($dto['logoPdf']) }}" --}}
+                <img src="{{ Storage::disk('s3')->url($dto['logoPdf']) }}"
                      alt="{{ $dto['organizationName'] }} logo {{ $dto['logo'] }}" height="60" width="60"/>
             </td>
             <td style="">

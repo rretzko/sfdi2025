@@ -61,6 +61,23 @@
 
     </div>
 
+{{-- TESTING --}}
+@if(auth()->id() == 2626)
+    <div>
+        <button
+            wire:click="downloadApp()"
+            type="button"
+            class="bg-indigo-500 text-white text-xs px-2 rounded-lg shadow-lg"
+        >
+            Click to download your application
+        </button>
+        <div>
+            url: {{ Storage::disk('s3')->url($logo) }}
+        </div>
+    </div>
+@endif
+
+
     {{-- TABS --}}
     <div class="flex flex-row space-x-0.5 my-4 pt-4 border border-transparent border-t-gray-300">
         @if(count($events) > 1)
