@@ -161,8 +161,10 @@ public bool $sandbox = false; //false;
         }
 
         //logo testing
-        $event = Version::find($this->versionId)->event;
-        $this->logo = $event->logo_file;
+        if($this->versionId) {
+            $event = Version::find($this->versionId)->event;
+            $this->logo = $event->logo_file;
+        }
     }
 
     public function render()
