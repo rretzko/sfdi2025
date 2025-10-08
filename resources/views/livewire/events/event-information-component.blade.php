@@ -62,21 +62,20 @@
     </div>
 
 {{-- TESTING --}}
-@if(auth()->id() == 2626)
-    <div>
-        <button
-            wire:click="downloadApp()"
-            type="button"
-            class="bg-indigo-500 text-white text-xs px-2 rounded-lg shadow-lg"
-        >
-            Click to download your application
-        </button>
-        <div>
-            url: {{ Storage::disk('s3')->url($logo) }}
-        </div>
-    </div>
-@endif
-
+{{--@if(auth()->id() == 2626)--}}
+{{--    <div>--}}
+{{--        <button--}}
+{{--            wire:click="downloadApp()"--}}
+{{--            type="button"--}}
+{{--            class="bg-indigo-500 text-white text-xs px-2 rounded-lg shadow-lg"--}}
+{{--        >--}}
+{{--            Click to download your application--}}
+{{--        </button>--}}
+{{--        <div>--}}
+{{--            url: {{ Storage::disk('s3')->url($logo) }}--}}
+{{--        </div>--}}
+{{--    </div>--}}
+{{--@endif--}}
 
     {{-- TABS --}}
     <div class="flex flex-row space-x-0.5 my-4 pt-4 border border-transparent border-t-gray-300">
@@ -107,7 +106,7 @@
         <div
             @class([
                 "flex flex-col mb-2",
-                $hideNonPaymentElementsOfApplication => 'hidden'
+//                $hideNonPaymentElementsOfApplication => 'hidden'
                 ])
         >
             <label for="form.programName">Name as it should appear in the program</label>
@@ -129,7 +128,7 @@
         <div
             @class([
                "flex flex-col mb-2",
-               $hideNonPaymentElementsOfApplication => 'hidden'
+//               $hideNonPaymentElementsOfApplication => 'hidden'
                ])
         >
             <label for="form.voicePartId">Auditioning on Voice Part</label>
@@ -156,13 +155,13 @@
 
         {{-- HOME ADDRESS --}}
         @if($form->requiresHomeAddress)
-            @if($hideNonPaymentElementsOfApplication)
+{{--            @if($hideNonPaymentElementsOfApplication)--}}
                 @include('components.partials.home-address')
-            @endif
+{{--            @endif--}}
         @endif {{-- end of requiresHomeAddress --}}
 
         @if($form->requiresEmergencyContact)
-            @if($hideNonPaymentElementsOfApplication)
+{{--            @if($hideNonPaymentElementsOfApplication)--}}
                 {{-- EMERGENCY CONTACTS --}}
                 <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
                 <label for="" class="font-semibold">Emergency Contact(s)
@@ -210,11 +209,11 @@
                     </div>
                 @endif
             </fieldset>
-            @endif
+{{--            @endif--}}
         @endif
 
         {{-- APPLICATION --}}
-        @if($hideNonPaymentElementsOfApplication)
+{{--        @if($hideNonPaymentElementsOfApplication)--}}
             <fieldset class="flex flex-col my-2 pt-2 border border-transparent border-t-gray-300">
                 <label for="" class="font-semibold">Application</label>
 
@@ -250,13 +249,13 @@
                 @endif
 
             </fieldset>
-        @endif
+{{--        @endif--}}
 
         {{-- UPLOADS --}}
         @if(($form->uploadType !== 'none') && $form->uploadTypesCount)
-            @if($hideNonPaymentElementsOfApplication)
+{{--            @if($hideNonPaymentElementsOfApplication)--}}
                 @include('components.partials.audition-recordings')
-            @endif
+{{--            @endif--}}
         @endif
 
         {{-- PITCH FILES --}}

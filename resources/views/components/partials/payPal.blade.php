@@ -7,7 +7,7 @@
 
     <div class="flex flex-row space-x-2">
         <label class="w-fit">Click the PayPal button to pay the Amount Due:</label>
-        <div class="">${{ number_format($rehearsal['participationAmountDue'] ?: $amountDue, 2) }}</div>
+        <div class="">${{ number_format(isset($rehearsal) && $rehearsal['participationAmountDue'] ?: $amountDue, 2) }}</div>
     </div>
 
     <!-- Identify your business so that you can collect the payments. -->
@@ -24,7 +24,7 @@
     <input type="hidden" name="on0" value="{{ $teacherName }}">
     <input type="hidden" name="email" value="{{ $sandbox ? $sandboxPersonalEmail : $email }}">
     <input type="hidden" name="currency_code" value="USD">
-    <input type="hidden" name="amount" value="{{ $rehearsal['participationAmountDue'] ?: $amountDue }}">
+    <input type="hidden" name="amount" value="{{ isset($rehearsal) && $rehearsal['participationAmountDue'] ?: $amountDue }}">
     <!-- display the payment button -->
     <input class="rounded-full w-fit" type="image" name="submit" src="{{ Storage::disk('s3')->url('pp.png') }}"
            alt="PayPal button">
