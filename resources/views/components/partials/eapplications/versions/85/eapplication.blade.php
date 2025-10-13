@@ -240,11 +240,10 @@
                     Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Thursday, January 9th
+                    Thursday, January 8th
                 </td>
                 <td style="text-align: center;">
-                    4-8:00 pm (middle school)<br />
-                    4-8:15 pm (high school)
+                    4:00 pm - 8:15 pm
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -255,11 +254,10 @@
                     Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Monday, January 13th
+                    Monday, January 12th
                 </td>
                 <td style="text-align: center;">
-                    4-8:00 pm (middle school)<br />
-                    4-8:15 pm (high school)
+                    4:00 pm - 8:15 pm
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -270,11 +268,10 @@
                     SNOW DATE Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Tuesday, January 14th
+                    Tuesday, January 13th
                 </td>
                 <td style="text-align: center;">
-                    4-8:00 pm (middle school)<br />
-                    4-8:15 pm (high school)
+                    4:00 pm -8:15
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -285,11 +282,10 @@
                     Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Wednesday, January 15th
+                    Wednesday, January 14th
                 </td>
                 <td style="text-align: center;">
-                    4-8:00 pm (middle school)<br />
-                    4-8:15 pm (high school)
+                    4:00 pm - 8:15 pm
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -300,7 +296,7 @@
                     All-Day Rehearsal
                 </td>
                 <td style="text-align: center;">
-                    Friday, January 17th
+                    Friday, January 16th
                 </td>
                 <td style="text-align: center;">
                     9:00 am - 3:15 pm
@@ -311,14 +307,27 @@
             </tr>
             <tr>
                 <td style="text-align: center;">
+                    Rehearsal
+                </td>
+                <td style="text-align: center;">
+                    Saturday, January 17th
+                </td>
+                <td style="text-align: center;">
+                    1:00 pm - 4:00 pm
+                </td>
+                <td style="text-align: center;">
+                    Randolph High School
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: center;">
                     Concert
                 </td>
                 <td style="text-align: center;">
-                    Saturday, January 18th
+                    Saturday, January 17th
                 </td>
                 <td style="text-align: center;">
-                    Call: 1:00 pm<br />
-                    Concert: 4:00 pm
+                    4:00 pm
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
@@ -329,7 +338,7 @@
                     SNOW DATE Concert
                 </td>
                 <td style="text-align: center;">
-                    Sunday, January 19th
+                    Sunday, January 18th
                 </td>
                 <td style="text-align: center;">
                     Call: 1:00 pm call<br />
