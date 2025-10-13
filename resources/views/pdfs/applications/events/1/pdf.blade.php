@@ -142,7 +142,7 @@
     <section id="parentEndorsement" style="margin-bottom: 1rem;">
 
         <header class="sectionHeader" style="text-tranform: uppercase;">
-            Parent Endorsement - Signature Required
+            Parent/Legal Guardian Endorsement - Signature Required
         </header>
 
         <div class="conditions">
