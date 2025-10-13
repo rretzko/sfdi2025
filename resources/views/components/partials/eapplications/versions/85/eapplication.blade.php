@@ -271,7 +271,7 @@
                     Tuesday, January 13th
                 </td>
                 <td style="text-align: center;">
-                    4:00 pm -8:15
+                    4:00 pm - 8:15 pm
                 </td>
                 <td style="text-align: center;">
                     Randolph High School
