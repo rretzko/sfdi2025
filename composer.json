@@ -9,7 +9,6 @@
         "aws/aws-sdk-php": "^3.320",
         "barryvdh/laravel-dompdf": "^3.0",
         "laravel/framework": "^11.9",
-        "laravel/spark-paddle": "^5.0",
         "laravel/tinker": "^2.9",
         "laravel/vapor-cli": "^1.65",
         "laravel/vapor-core": "^2.37",

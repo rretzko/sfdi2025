@@ -284,10 +284,11 @@
                         @if($form->ePayVendor === 'square')
 
                             <div>
-                                Please note: You will be asked for an PIN Number when paying through Square.<br />
-                                Please enter: <span class="font-semibold text-lg font-mono">
+{{--                                Please note: You will be asked for an PIN Number when paying through Square.<br />--}}
+                                Please note: Enter $25 when asked to "Enter Amount",<br />
+                                and then <span class="font-semibold text-lg font-mono">
                                     <span class="text-2xl text-red-600">{{ $squareId }}</span>
-                                </span> for your PIN Number.
+                                </span> when asked for the "School Name" on the subsequent page.
                             </div>
                             @include('square.buyButton')
                             <div id="advisory" class="text-xs text-red-600">

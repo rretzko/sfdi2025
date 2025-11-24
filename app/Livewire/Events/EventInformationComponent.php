@@ -427,7 +427,17 @@ public bool $sandbox = false; //false;
 
     private function getSquareCredential(): string
     {
-        $str =  EpaymentCredentials::where('version_id', $this->versionId)
+        /**
+         * @todo Create proper code for identifying
+         * correct version_id when more than one
+         * version is active.
+         *
+         * Workaround: Hardcoding this to version_id=86
+         * CJMEA 2026
+         *
+         */
+        $versionId = 86;
+        $str =  EpaymentCredentials::where('version_id', $versionId)
             ->first()
             ->epayment_id ?? '';
 
@@ -435,7 +445,7 @@ public bool $sandbox = false; //false;
             return $str;
         }
 
-        $eventId = Version::find($this->versionId)->event->id;
+        $eventId = Version::find($versionId)->event->id;
 
         return EpaymentCredentials::where('event_id', $eventId)
             ->first()
