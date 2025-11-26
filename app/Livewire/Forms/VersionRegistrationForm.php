@@ -335,6 +335,13 @@ class VersionRegistrationForm extends Form
         return $updated;
     }
 
+    public function cjmeaWorkAround(Candidate $candidate, int $versionId): void
+    {
+        $this->candidate = $candidate;
+        $this->versionId = $versionId;
+        $this->setPitchFiles();
+    }
+
     private function emergencyContactIsRequired(): bool
     {
         $versionConfigEmergencyContact = VersionConfigEmergencyContact::where('version_id', $this->versionId)->first();

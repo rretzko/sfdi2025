@@ -61,6 +61,14 @@
 
     </div>
 
+    {{-- WORKAROUND FOR CJMEA --}}
+    <div class="mt-8">
+        @if($displayPitchFiles)  {{-- After student access closes AND before auditions begin --}}
+            <header class="font-semibold">CJMEA Region II Pitch Files</header>
+            @include('components.partials.pitch-files')
+        @endif
+    </div>
+
 {{-- TESTING --}}
 {{--@if(auth()->id() == 2626)--}}
 {{--    <div>--}}

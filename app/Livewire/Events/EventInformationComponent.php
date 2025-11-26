@@ -43,6 +43,7 @@ class EventInformationComponent extends Component
     public array $auditionFiles = [];
     public array $coTeacherIds = [];
     public string $defaultVoicePartDescr = '';
+    public bool $displayPitchFiles = false;
     public array $eligibleVersions = [];
     public array $emergencyContacts = [];
     public array $events = []; //synonym for versions
@@ -164,6 +165,15 @@ public bool $sandbox = false; //false;
         if($this->versionId) {
             $event = Version::find($this->versionId)->event;
             $this->logo = $event->logo_file;
+        }
+
+        //WORKAROUND TO KEEP CJMEA PITCH FILES DISPLAYED UNTIL DAY OF AUDITIONS
+        $isCandidate = Candidate::where('student_id', auth()->id())->where('version_id', 86)->exists();
+        $auditionsOpenDt = Carbon::parse(VersionConfigDate::where('version_id', 86)->where('date_type', 'adjudication_open')->first()->version_date);
+        $auditionsAreOpen = Carbon::now()->gt($auditionsOpenDt);
+        $this->displayPitchFiles = ($isCandidate && !$auditionsAreOpen);
+        if($isCandidate){
+            $this->form->cjmeaWorkAround(Candidate::where('student_id', auth()->id())->where('version_id', 86)->first(), 86);
         }
     }
 
