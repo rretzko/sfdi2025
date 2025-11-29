@@ -300,7 +300,7 @@ public bool $sandbox = false; //false;
             ];
         }
 
-        return implode($separator, $properties);
+        return implode($separator, $properties) . $separator;
     }
 
     private function getCustomRehearsalProperties(int $versionId, int $amountDue): string
