@@ -69,7 +69,9 @@
         <tbody>
         <tr>
             <td>{{ $dto['fullNameAlpha'] }}</td>
-            <td style="color: red;">{{ $dto['candidateVoicePartDescr'] }}</td>
+            <td style="font-size: 24px; font-weight: bold; color: black;">
+                {{ $dto['candidateVoicePartDescr'] }}
+            </td>
             <td>Grade: {{ $dto['grade'] }}</td>
             <td>{{ $dto['schoolShortName'] }}</td>
         </tr>

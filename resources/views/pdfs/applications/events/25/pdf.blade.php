@@ -145,7 +145,9 @@
             </tr>
             <tr>
                 <td class="label">Voice Part</td>
-                <td class="data">{{ $dto['candidateVoicePartDescr'] }}</td>
+                <td class="data" style="font-size: 24px; font-weight: bold; color: black;">
+                    {{ $dto['candidateVoicePartDescr'] }}
+                </td>
             </tr>
         </table>
 
